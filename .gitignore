@@ -1,0 +1,13 @@
+data/
+output/
+out/
+*.RData
+*.rds
+*.csv
+*.parquet
+*.png
+*.pdf
+__pycache__/
+*.pyc
+.venv/
+.Rhistory

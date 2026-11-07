@@ -1,0 +1,17 @@
+{
+  "title": "Analysis code for: Age at first reported diagnosis of arthritis and mortality in two ageing cohorts",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "version": "1.0.0",
+  "language": "eng",
+  "creators": [
+    {"name": "Bi, Chuanhao", "affiliation": "Department of Rehabilitation, The Affiliated Huai'an No. 1 People's Hospital of Nanjing Medical University"},
+    {"name": "Zhong, Yun", "affiliation": "Department of Geriatrics, The Affiliated Huai'an No. 1 People's Hospital of Nanjing Medical University"},
+    {"name": "Li, Ju", "affiliation": "Department of Rheumatology and Immunology, The Affiliated Huai'an No. 1 People's Hospital of Nanjing Medical University"},
+    {"name": "Meng, Deqian", "affiliation": "Department of Rheumatology and Immunology, The Affiliated Huai'an No. 1 People's Hospital of Nanjing Medical University"},
+    {"name": "Wang, Kai", "affiliation": "Department of Rheumatology and Immunology, The Affiliated Huai'an No. 1 People's Hospital of Nanjing Medical University"}
+  ],
+  "keywords": ["arthritis", "age at onset", "mortality", "time scale", "left truncation", "SHARE", "HRS", "cohort study"],
+  "description": "Python and R code that builds the SHARE and HRS analytic cohorts, fits Cox models with age as the time scale and delayed entry, re-estimates onset contrasts under three follow-up rules and within shared age windows, and reproduces the figures and tables of the manuscript. Participant-level data are not included."
+}
