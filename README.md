@@ -113,10 +113,9 @@ article is published) and this repository:
 > diagnosis of arthritis and mortality in two ageing cohorts. Zenodo.
 > https://doi.org/10.5281/zenodo.24031958
 
-The concept DOI 10.5281/zenodo.24031958 always resolves to the latest release.
-Version 1.1.1 is the release used for the manuscript; the v1.0.0 snapshot remains
-at 10.5281/zenodo.24031959. Archived snapshots are frozen at their tags; this
-README is a living document and may be ahead of them.
+The concept DOI 10.5281/zenodo.24031958 always resolves to the latest release;
+the v1.0.0 snapshot remains at 10.5281/zenodo.24031959. Archived snapshots are
+frozen at their tags; this README is a living document and may be ahead of them.
 
 ## License
 
