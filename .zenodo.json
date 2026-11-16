@@ -3,7 +3,7 @@
   "upload_type": "software",
   "access_right": "open",
   "license": "MIT",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "language": "eng",
   "creators": [
     {
@@ -37,5 +37,5 @@
     "HRS",
     "cohort study"
   ],
-  "description": "Python and R code that builds the SHARE and HRS analytic cohorts, fits Cox models with age as the time scale and delayed entry, re-estimates onset contrasts under three follow-up rules and within shared age windows, and reproduces the figures and tables of the manuscript. Version 1.1.1 makes the pipeline portable (POSIX and Windows path handling, AGING_DB_OUT honoured throughout), aligns the follow-up rule labels with the paper, and adds a pipeline and dependency guide. Participant-level data are not included."
+  "description": "Python and R code that builds the SHARE and HRS analytic cohorts, fits Cox models with age as the time scale and delayed entry, re-estimates onset contrasts under three follow-up rules and within shared age windows, and reproduces the figures and tables of the manuscript. Version 1.1.2 stores model estimates at full precision so that the manuscript rounds once at display time; version 1.1.1 made the pipeline portable (POSIX and Windows path handling, AGING_DB_OUT honoured throughout), aligned the follow-up rule labels with the paper, and added a pipeline and dependency guide. Participant-level data are not included."
 }
