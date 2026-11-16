@@ -111,12 +111,12 @@ article is published) and this repository:
 
 > Bi C, Zhong Y, Li J, Meng D, Wang K. Analysis code for: Age at first reported
 > diagnosis of arthritis and mortality in two ageing cohorts. Zenodo.
-> https://doi.org/10.5281/zenodo.24031959
+> https://doi.org/10.5281/zenodo.24031958
 
-Version 1.0.0 of this repository is archived at that DOI (concept DOI
-10.5281/zenodo.24031958, which always resolves to the latest version). The archived
-snapshot is frozen at tag `v1.0.0`; this README is a living document and may be ahead
-of it.
+The concept DOI 10.5281/zenodo.24031958 always resolves to the latest release.
+Version 1.1.1 is the release used for the manuscript; the v1.0.0 snapshot remains
+at 10.5281/zenodo.24031959. Archived snapshots are frozen at their tags; this
+README is a living document and may be ahead of them.
 
 ## License
 
