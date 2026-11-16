@@ -105,7 +105,10 @@ def fit(form, cols, keys, lab):
                'd_6074': 'Onset 60-74 (incident, from first positive)',
                'd_75': 'Onset >=75 (incident, from first positive)'}[k]
         P(f"  {cod:44s} {est:.3f} ({lo:.3f}-{hi:.3f})  p={pv:.2e}")
-        out.append(dict(model=lab, contrast=cod, hr=round(est, 3), lo=round(lo, 3), hi=round(hi, 3),
+        # Store full precision: the manuscript rounds once, at display time. Rounding
+        # here as well would round twice and could move a value across a 0.01 boundary
+        # (for example 1.2946 -> 1.295 -> 1.30 instead of 1.29).
+        out.append(dict(model=lab, contrast=cod, hr=float(est), lo=float(lo), hi=float(hi),
                         p=float(f"{pv:.3g}"), n_persons=D['pid'].nunique(), events=int(m.event_observed.sum())))
 
 fit('d_ever + male + edu + smoke_ever', ['d_ever'], ['d_ever'], 'Any vs never')
