@@ -40,7 +40,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -162,5 +162,5 @@ P("covariates also returns a near-identical pair, which is what would be expecte
 P("closeness comes from the data rather than from the code. It does not explain why the two")
 P("steps are so similar, and the manuscript says so.")
 
-io.open(f"{OUT}\\s98_verify_061.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s98_verify_061.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s98_verify_061.txt")

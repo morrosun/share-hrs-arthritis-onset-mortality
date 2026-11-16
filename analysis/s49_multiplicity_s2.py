@@ -24,7 +24,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 def load(db):
-    d = pyreadr.read_r(f"{BASE}\\{db}.RData")[db].copy()
+    d = pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db].copy()
     return d.rename(columns={d.columns[0]: 'pid'})
 
 rows = []
@@ -159,7 +159,7 @@ P(f"原始 P<0.05 的检验数 = {int((R.p_raw<0.05).sum())}；"
 P(f"按队列分族：Holm 后 P<0.05 = {int((R.p_holm_family<0.05).sum())}；"
   f"BH 后 q<0.05 = {int((R.q_bh_family<0.05).sum())}")
 
-R.to_csv(f"{OUT}\\tableS2_multiplicity_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s49_multiplicity.txt", 'w', encoding='utf-8').write("\n".join(lines))
+R.to_csv(os.path.join(OUT, "tableS2_multiplicity_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s49_multiplicity.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 tableS2_multiplicity_v5.csv / s49_multiplicity.txt")
 print("DONE")

@@ -76,5 +76,5 @@ P("top five weights and their counts:")
 for v in u[-5:][::-1]:
     P("  %.4f  n=%d" % (v, (np.round(w, 6) == v).sum()))
 
-io.open(f"{OUT}\\s102_weight_check.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s102_weight_check.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s102_weight_check.txt")

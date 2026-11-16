@@ -19,7 +19,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-p = pd.read_csv(f"{OUT}\\analysis_share.csv")
+p = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 p['grp'] = p['grp'].astype(str).str.strip()
 p['event'] = p['event'].astype(int)
 p['male'] = (p['sex'] == 1).astype(float)
@@ -65,6 +65,6 @@ for lab, dur, entry, form in SPECS:
 
 R = pd.DataFrame(rows)
 R['txt'] = R.apply(lambda r: f"{r['hr']:.2f} ({r['lo']:.2f}\u2013{r['hi']:.2f})", axis=1)
-R.to_csv(f"{OUT}\\table3_naive.csv", index=False, encoding='utf-8-sig')
+R.to_csv(os.path.join(OUT, "table3_naive.csv"), index=False, encoding='utf-8-sig')
 P("\n" + R.pivot(index='grp', columns='model', values='txt').to_string())
-io.open(f"{OUT}\\s16_table3.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s16_table3.txt"), 'w', encoding='utf-8').write("\n".join(lines))

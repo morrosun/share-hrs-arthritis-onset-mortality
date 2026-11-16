@@ -45,10 +45,10 @@ def add(panel, **kw):
     rows.append(base)
 
 # ==================== 数据 ====================
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 
@@ -243,7 +243,7 @@ P("\n注：duration at entry = entry age - onset age，同时携带入组年龄�
 P("    因此上述 HR 不是病程效应；它与 Table 3 的起病年龄系数并不互为倒数。")
 
 R = pd.DataFrame(rows)
-R.to_csv(f"{OUT}\\tableS6_duration_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s48_duration.txt", 'w', encoding='utf-8').write("\n".join(lines))
+R.to_csv(os.path.join(OUT, "tableS6_duration_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s48_duration.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 tableS6_duration_v5.csv / s48_duration.txt")
 print("DONE")

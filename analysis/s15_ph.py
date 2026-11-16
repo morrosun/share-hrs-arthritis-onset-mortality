@@ -17,7 +17,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 # ---------------- SHARE ----------------
-d = pd.read_csv(f"{OUT}\\analysis_share.csv")
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 d['grp'] = d['grp'].astype(str).str.strip()
 d['male'] = (d['sex'] == 1).astype(float)
 d['smoke_ever'] = (d['smoke'] >= 1).astype(float)
@@ -50,7 +50,7 @@ P(f"5 年后  HR:  60-74 {np.exp(b['g74']+b['g74_late']):.2f}   >=75 {np.exp(b['
 P(f"交互 P: 60-74 {m.summary.loc['g74_late','p']:.3f}   >=75 {m.summary.loc['g75_late','p']:.3f}")
 
 # ---------------- HRS ----------------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]:'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age','arthre']).sort_values(['pid','wave'])
@@ -101,4 +101,4 @@ for lab, form in [("any arthritis", 'art + art_late + male + edu + smoke_ever'),
     P(f"\n--- {lab} ---")
     P(mm.summary[['exp(coef)','se(coef)','p']].round(3).to_string())
 
-io.open(f"{OUT}\\s15_ph.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s15_ph.txt"), 'w', encoding='utf-8').write("\n".join(lines))

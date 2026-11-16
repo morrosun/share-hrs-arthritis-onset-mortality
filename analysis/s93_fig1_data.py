@@ -26,7 +26,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 
-d = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 P("=" * 78)
 P("# Figure 1 flow check")
 P("=" * 78)
@@ -43,20 +43,20 @@ flow = pd.DataFrame([
     ("Valid age at first diagnosis (5-105 years)", n2),
     ("Analytic cohort", n3),
 ], columns=['lab', 'n'])
-flow.to_csv(f"{OUT}\\fig1_flow_v18.csv", index=False, encoding='utf-8-sig')
+flow.to_csv(os.path.join(OUT, "fig1_flow_v18.csv"), index=False, encoding='utf-8-sig')
 
 # ---- onset distribution ----
 bins = np.floor(d['onset_age'] / 5) * 5 + 2.5
 sv = bins.value_counts().sort_index().rename_axis('age').reset_index(name='n')
 sv['lib'] = 'SHARE'
-old = pd.read_csv(f"{OUT}\\fig1_onset_dist_v5.csv", encoding='utf-8-sig')
+old = pd.read_csv(os.path.join(OUT, "fig1_onset_dist_v5.csv"), encoding='utf-8-sig')
 hv = old[old['lib'] == 'HRS'][['lib', 'age', 'n']].copy()
 dist = pd.concat([sv[['lib', 'age', 'n']], hv], ignore_index=True)
 dist['pct'] = 100 * dist['n'] / dist.groupby('lib')['n'].transform('sum')
-dist.to_csv(f"{OUT}\\fig1_onset_dist_v18.csv", index=False, encoding='utf-8-sig')
+dist.to_csv(os.path.join(OUT, "fig1_onset_dist_v18.csv"), index=False, encoding='utf-8-sig')
 P("")
 P(f"  SHARE onset distribution n={int(sv['n'].sum()):,} (median {d['onset_age'].median():.0f})")
 P(f"  HRS   onset distribution n={int(hv['n'].sum()):,} (rows {len(hv)})")
 
-io.open(f"{OUT}\\s93_fig1.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s93_fig1.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE fig1_flow_v18.csv + fig1_onset_dist_v18.csv")

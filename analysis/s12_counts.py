@@ -11,7 +11,7 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY_H = {5:2000,6:2002,7:2004,8:2006,9:2008,10:2010,11:2012,12:2014,13:2016,14:2018,15:2020}
 WY_S = {1:2004,2:2007,4:2011,5:2013,6:2015,7:2017,8:2020}
@@ -92,6 +92,6 @@ P("="*74 + "\n# 各结局模型分析样本\n" + "="*74)
 P(t.to_string(index=False))
 P("\n[按库汇总]")
 P(t.groupby('lib')[['rows','persons']].sum().to_string())
-t.to_csv(f"{OUT}\\table2_n.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s12_counts.txt", 'w', encoding='utf-8').write("\n".join(lines))
+t.to_csv(os.path.join(OUT, "table2_n.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s12_counts.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 table2_n.csv / s12_counts.txt")

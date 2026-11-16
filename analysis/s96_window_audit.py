@@ -163,11 +163,11 @@ def fit(d, a, b, lo, hi):
                 lo=float(q['exp(coef) lower 95%']), hi=float(q['exp(coef) upper 95%']))
 
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S)
 s['age'] = s['yr'] - s['rabyear']
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 
 I_s = build_incident(s, WY_S)
@@ -240,6 +240,6 @@ for name, D in designs:
                          n_window=rw['n'] if rw else None, d_window=rw['deaths'] if rw else None,
                          d_ref_in_overlap=d_b_ov))
 
-pd.DataFrame(rows).to_csv(f"{OUT}\\s96_window_audit.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s96_window_audit.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows).to_csv(os.path.join(OUT, "s96_window_audit.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s96_window_audit.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("Wrote out/s96_window_audit.txt / .csv")

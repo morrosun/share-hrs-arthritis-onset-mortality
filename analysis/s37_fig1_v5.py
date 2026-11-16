@@ -22,7 +22,7 @@ def P(s=""):
 
 
 # ---- 旧 Figure 1B 数据 ----
-old = pd.read_csv(f"{OUT}\\fig1_onset_dist.csv", encoding='utf-8-sig')
+old = pd.read_csv(os.path.join(OUT, "fig1_onset_dist.csv"), encoding='utf-8-sig')
 P("=" * 78)
 P("# 旧 out/fig1_onset_dist.csv（fig1_fig3.R 当前读取的文件）")
 P("=" * 78)
@@ -31,24 +31,24 @@ for lib, d in old.groupby('lib'):
 P("  HRS 前 8 个 bin:")
 P(old[old['lib'] == 'HRS'].head(8).to_string(index=False))
 
-old2 = pd.read_csv(f"{OUT}\\fig1_onset_v2.csv", encoding='utf-8-sig')
+old2 = pd.read_csv(os.path.join(OUT, "fig1_onset_v2.csv"), encoding='utf-8-sig')
 P("")
 P(f"# out/fig1_onset_v2.csv（s25 生成，v2 时声称已改为仅发病病例）")
 for lib, d in old2.groupby('lib'):
     P(f"  {lib}: n={int(d['n'].sum()):,}  age 范围 {d['age'].min()}-{d['age'].max()}  bin 数 {len(d)}")
 
 # ---- Figure 1A / Figure 2 数据来源 ----
-flow = pd.read_csv(f"{OUT}\\fig1_flow.csv", header=None, encoding='utf-8-sig')
+flow = pd.read_csv(os.path.join(OUT, "fig1_flow.csv"), header=None, encoding='utf-8-sig')
 P("")
 P("# Figure 1A 流程（out/fig1_flow.csv）")
 P(flow.to_string(index=False, header=False))
-hr = pd.read_csv(f"{OUT}\\fig1_hr.csv", encoding='utf-8-sig')
+hr = pd.read_csv(os.path.join(OUT, "fig1_hr.csv"), encoding='utf-8-sig')
 P("")
 P("# Figure 2C 森林图（out/fig1_hr.csv，SHARE prevalent 年龄尺度 Cox）")
 P(hr.to_string(index=False))
 
 # ---- 生成 v5 的 HRS 发病分布 ----
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -81,8 +81,8 @@ hv = hv[['lib', 'age', 'n', 'pct']]
 sv = old[old['lib'] == 'SHARE'][['lib', 'age', 'n']].copy()
 sv['pct'] = 100 * sv['n'] / sv['n'].sum()
 v5 = pd.concat([sv[['lib', 'age', 'n', 'pct']], hv], ignore_index=True)
-v5.to_csv(f"{OUT}\\fig1_onset_dist_v5.csv", index=False, encoding='utf-8-sig')
+v5.to_csv(os.path.join(OUT, "fig1_onset_dist_v5.csv"), index=False, encoding='utf-8-sig')
 P(f"  写出 out/fig1_onset_dist_v5.csv（SHARE {int(sv['n'].sum()):,} + HRS {int(hv['n'].sum()):,}，{len(v5)} 行）")
 
-io.open(f"{OUT}\\s37_fig1_audit.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s37_fig1_audit.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 out/s37_fig1_audit.txt")

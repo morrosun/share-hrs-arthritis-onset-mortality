@@ -43,7 +43,7 @@ def grp(x):
 
 
 def load(db, wy):
-    d = pyreadr.read_r(f"{BASE}\\{db}.RData")[db].copy()
+    d = pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db].copy()
     d = d.rename(columns={d.columns[0]: 'pid'})
     d['yr'] = d['wave'].map(wy)
     d['age'] = d['yr'] - d['rabyear']
@@ -399,7 +399,7 @@ P("     point and to retaining same-year deaths, not to an undocumented sample c
 P("\n" + "=" * 90)
 P("# 6. Where did the earlier draft's PH P=0.002/0.008 come from?")
 P("=" * 90)
-c = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+c = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 c = c.rename(columns={'entry_age': 'entry', 'exit_age': 'exit'})
 c['grp'] = c['grp'].astype(str).str.strip()
 c['g_60_74'] = (c['grp'] == '60-74').astype(float)
@@ -462,10 +462,10 @@ for nm, df, wy in [('SHARE', s, WY_S), ('HRS', h, WY_H)]:
       f"min(entry)={D5['entry'].min():.0f}, "
       f"all entry==pos: {bool((D5['entry']==D5['pos']).all())}")
 
-pd.DataFrame(rows7).to_csv(f"{OUT}\\tableS7_waves_v7.csv", index=False, encoding='utf-8-sig')
-pd.DataFrame(rows8).to_csv(f"{OUT}\\tableS8_sameyear_timing_v7.csv", index=False, encoding='utf-8-sig')
-pd.DataFrame(verrows).to_csv(f"{OUT}\\tableS4_version_check_v7.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s52_audit_waves_timing.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows7).to_csv(os.path.join(OUT, "tableS7_waves_v7.csv"), index=False, encoding='utf-8-sig')
+pd.DataFrame(rows8).to_csv(os.path.join(OUT, "tableS8_sameyear_timing_v7.csv"), index=False, encoding='utf-8-sig')
+pd.DataFrame(verrows).to_csv(os.path.join(OUT, "tableS4_version_check_v7.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s52_audit_waves_timing.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/tableS7_waves_v7.csv, out/tableS8_sameyear_timing_v7.csv, "
   "out/tableS4_version_check_v7.csv, out/s52_audit_waves_timing.txt")
 print("DONE")

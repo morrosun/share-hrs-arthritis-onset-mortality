@@ -40,7 +40,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -134,6 +134,6 @@ for rname, D in RULES:
                             deaths=r['deaths'], hr=r['hr'], lo=r['lo'], hi=r['hi'],
                             bd_a=bd_a, bd_b=bd_b))
 
-pd.DataFrame(out).to_csv(f"{OUT}\\tableS12_boundary.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s104_boundary_sensitivity.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(out).to_csv(os.path.join(OUT, "tableS12_boundary.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s104_boundary_sensitivity.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s104_boundary_sensitivity.txt and out/tableS12_boundary.csv")

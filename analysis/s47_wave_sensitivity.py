@@ -27,7 +27,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 def load(db):
-    d = pyreadr.read_r(f"{BASE}\\{db}.RData")[db].copy()
+    d = pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db].copy()
     d = d.rename(columns={d.columns[0]: 'pid'})
     d['yr'] = d['wave'].map(WY_S if db == 'share' else WY_H)
     d['age'] = d['yr'] - d['rabyear']
@@ -56,7 +56,7 @@ g = first.groupby('entry_wave').agg(n_entered=('has_dx', 'size'), n_dx_age=('has
                                     onset_med=('onset_age', 'median'),
                                     n_waves=('n_waves', 'mean'))
 g['availability_pct'] = 100 * g['n_dx_age'] / g['n_entered']
-coh = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+coh = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 gc = coh.groupby('w0').agg(n_analytic=('event', 'size'), deaths=('event', 'sum'),
                            entry_age=('entry_age', 'mean'), py=('py', 'sum'))
 g = g.join(gc)
@@ -249,8 +249,8 @@ for lab, ws in [('All entry waves', None)] + PERIODS:
                      hi2=(res['c2'][2] if res['c2'] else None)))
 
 R = pd.DataFrame(rows)
-R.to_csv(f"{OUT}\\tableS7_waves_v5.csv", index=False, encoding='utf-8-sig')
-R[R['panel'] == 'A'].to_csv(f"{OUT}\\tableS7_wave_availability.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s47_wave_sensitivity.txt", 'w', encoding='utf-8').write("\n".join(lines))
+R.to_csv(os.path.join(OUT, "tableS7_waves_v5.csv"), index=False, encoding='utf-8-sig')
+R[R['panel'] == 'A'].to_csv(os.path.join(OUT, "tableS7_wave_availability.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s47_wave_sensitivity.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 tableS7_waves_v5.csv / s47_wave_sensitivity.txt")
 print("DONE")

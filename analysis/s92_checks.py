@@ -23,7 +23,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 
-d = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 d['male'] = (d['sex'] == 1).astype(float)
 d['smoke_ever'] = (d['smoke'] >= 1).astype(float)
 base_cov = ['male', 'edu', 'smoke_ever']
@@ -111,7 +111,7 @@ P("  number of unrecorded deaths required.")
 
 
 # ---------------- (3) 重写 Table S6 面板 C，使其与主模型同一套协变量编码 ----------------
-src = pd.read_csv(f"{OUT}\\tableS6_duration_v5.csv", encoding='utf-8-sig')
+src = pd.read_csv(os.path.join(OUT, "tableS6_duration_v5.csv"), encoding='utf-8-sig')
 src = src[src['panel'] != 'C']
 ci1l, ci1h = m1.confidence_intervals_.loc['onset10'].tolist()
 ci2l, ci2h = m2.confidence_intervals_.loc['proxy'].tolist()
@@ -128,8 +128,8 @@ newC = pd.DataFrame([
          est=round(float(np.exp(b1 + b2)), 6), loglik=round(float(m1.log_likelihood_ - m2.log_likelihood_), 8)),
 ])
 out6 = pd.concat([src, newC], ignore_index=True)
-out6.to_csv(f"{OUT}\\tableS6_duration_v18.csv", index=False, encoding='utf-8-sig')
+out6.to_csv(os.path.join(OUT, "tableS6_duration_v18.csv"), index=False, encoding='utf-8-sig')
 P(f"\nrewrote panel C on the analysis cohort (n={len(d):,}) -> tableS6_duration_v18.csv")
 
-io.open(f"{OUT}\\s92_checks.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s92_checks.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE s92_checks.txt")

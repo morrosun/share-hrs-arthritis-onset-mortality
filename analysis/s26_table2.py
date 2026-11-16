@@ -25,7 +25,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 # ---------- 数据 ----------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = h[COM].fillna(0).sum(axis=1)
@@ -54,7 +54,7 @@ hh['band'] = pd.cut(hh['age'], [45, 60, 70, 80, 90, 106],
 hh = hh.dropna(subset=['band'])
 hh['state'] = pd.Categorical(hh['state'], ['never', 'prevalent', 'on_<60', 'on_60-74', 'on_>=75'])
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = s[COM].fillna(0).sum(axis=1)
@@ -134,7 +134,7 @@ res += run(hh, 'comorb', 'HRS', 'ratio', 'Comorbidity count (0\u20136)')
 res += run(ss, 'mob', 'SHARE', 'ratio', 'Mobility limitations (0\u20132)')
 res += run(ss, 'comorb', 'SHARE', 'ratio', 'Comorbidity count (0\u20136)')
 
-pd.DataFrame(res).to_csv(f"{OUT}\\table2_v2.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(res).to_csv(os.path.join(OUT, "table2_v2.csv"), index=False, encoding='utf-8-sig')
 P(f"\n写出 table2_v2.csv  {len(res)} 行")
-io.open(f"{OUT}\\s26_table2.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s26_table2.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("DONE")

@@ -31,7 +31,7 @@ def comorb(df):
     return x.fillna(0).sum(axis=1)
 
 # ==================== HRS ====================
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = comorb(h)
@@ -63,7 +63,7 @@ hh['state'] = pd.Categorical(hh['state'], ['never', 'prevalent', 'on_<60', 'on_6
 P(f"HRS person-waves={len(hh):,}  persons={hh['pid'].nunique():,}")
 
 # ==================== SHARE ====================
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = comorb(s)
@@ -133,7 +133,7 @@ fit_block(ss, 'mob', 'SHARE', 'IRR', 'Mobility limitation count (0-2)')
 fit_block(ss, 'comorb', 'SHARE', 'IRR', 'Comorbidity count (0-6)')
 
 T2 = pd.DataFrame(rows_t2)
-T2.to_csv(f"{OUT}\\table2_states_v2.csv", index=False, encoding='utf-8-sig')
+T2.to_csv(os.path.join(OUT, "table2_states_v2.csv"), index=False, encoding='utf-8-sig')
 P(f"\n写出 table2_states_v2.csv  {len(T2)} 行")
 
 # ==================== Figure 3：新暴露五态，分年龄别死亡率 ====================
@@ -180,23 +180,23 @@ g3 = F3.groupby(['grp', 'band'], observed=True).agg(py=('py', 'sum'), death=('de
 g3['rate'] = 1000 * g3['death'] / g3['py']
 g3 = g3[g3['py'] >= 200]
 P(g3.pivot(index='band', columns='grp', values='rate').round(1).to_string())
-g3.to_csv(f"{OUT}\\fig3_rates_v2.csv", index=False, encoding='utf-8-sig')
+g3.to_csv(os.path.join(OUT, "fig3_rates_v2.csv"), index=False, encoding='utf-8-sig')
 P(f"\n写出 fig3_rates_v2.csv  {len(g3)} 行")
 P("\n[各组人年与死亡（Figure 3 口径）]")
 P(F3.groupby('grp', observed=True).agg(py=('py', 'sum'), deaths=('death', 'sum')).round(0).to_string())
 
 # Figure 1B：两库起病年龄分布（HRS 用 incident 中点）
 d1 = []
-for lib, v in [('SHARE', pd.read_csv(f"{OUT}\\analysis_share.csv")['onset_age'].dropna()),
+for lib, v in [('SHARE', pd.read_csv(os.path.join(OUT, "analysis_share.csv"))['onset_age'].dropna()),
                ('HRS', S[S['state'].str.startswith('on_')]['onset'].dropna())]:
     v = v[(v >= 15) & (v < 100)]
     for lo in range(15, 100, 5):
         d1.append(dict(lib=lib, age=lo + 2.5, n=int(((v >= lo) & (v < lo + 5)).sum())))
 D1 = pd.DataFrame(d1)
 D1['pct'] = D1.groupby('lib')['n'].transform(lambda x: 100 * x / x.sum())
-D1.to_csv(f"{OUT}\\fig1_onset_v2.csv", index=False, encoding='utf-8-sig')
+D1.to_csv(os.path.join(OUT, "fig1_onset_v2.csv"), index=False, encoding='utf-8-sig')
 P("\n[Figure 1B 数据已写 fig1_onset_v2.csv]")
 P(D1.groupby('lib')['n'].sum().to_string())
 
-io.open(f"{OUT}\\s25_v2.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s25_v2.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE s25_v2.txt")

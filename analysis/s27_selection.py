@@ -16,7 +16,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s = s.sort_values(['pid', 'wave'])
@@ -59,5 +59,5 @@ D['eb'] = pd.cut(D['entry'], [40, 55, 65, 75, 85, 110])
 P(D.groupby('eb', observed=True)['has_dg'].agg(['size', 'mean']).round(3).to_string())
 
 P("\n[结论判据] 若两组死亡比例与入组年龄接近，则『有诊断年龄』主要反映问卷可得性而非健康选择。")
-io.open(f"{OUT}\\s27_selection.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s27_selection.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("DONE")

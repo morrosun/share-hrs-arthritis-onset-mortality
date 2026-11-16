@@ -16,7 +16,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-d = pd.read_csv(f"{OUT}\\analysis_share.csv")
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 d['grp'] = d['grp'].astype(str).str.strip()
 d['male'] = (d['sex'] == 1).astype(float)
 d['smoke_ever'] = (d['smoke'] >= 1).astype(float)
@@ -74,4 +74,4 @@ P(f"  60-74 旧 {res_old['60-74'][0]:.2f} ({res_old['60-74'][1]:.2f}-{res_old['6
 P(f"  >=75  旧 {res_old['>=75'][0]:.2f} ({res_old['>=75'][1]:.2f}-{res_old['>=75'][2]:.2f})"
   f"  → 新 {res_new['>=75'][0]:.2f} ({res_new['>=75'][1]:.2f}-{res_new['>=75'][2]:.2f})")
 
-io.open(f"{OUT}\\s17_audit.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s17_audit.txt"), 'w', encoding='utf-8').write("\n".join(lines))

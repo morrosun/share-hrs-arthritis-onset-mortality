@@ -38,7 +38,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -94,5 +94,5 @@ for lab, lo, hi in SPECS:
       f"HR {q['exp(coef)']:.4f} ({q['exp(coef) lower 95%']:.3f}-{q['exp(coef) upper 95%']:.3f})  "
       f"se {q['se(coef)']:.5f}")
 
-io.open(f"{OUT}\\s103_window_ci.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s103_window_ci.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s103_window_ci.txt")

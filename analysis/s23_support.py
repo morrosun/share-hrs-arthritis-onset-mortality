@@ -63,13 +63,13 @@ def band_table(df, entry_col, exit_col, death_col='event', label=''):
     return T[GRPS].sort_index()
 
 # ==================== 1. SHARE ====================
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s = s.sort_values(['pid', 'wave'])
 
 # 1a prevalent（主队列，来自 analysis_share.csv）
-A = pd.read_csv(f"{OUT}\\analysis_share.csv")
+A = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 A = A.rename(columns={'entry_age': 'entry', 'exit_age': 'exit'})
 A['grp'] = to_grp(A['onset_age'])
 A['male'] = (A['sex'] == 1).astype(float)
@@ -109,7 +109,7 @@ IW['event'] = np.where(IW['exit'] < IW['exit_full'] - 1e-9, 0, IW['event'])
 IW = IW[IW['exit'] > IW['entry']]
 
 # ==================== 2. HRS ====================
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -186,7 +186,7 @@ for name, d in DESIGNS.items():
                                  exit_max=round(r['exit_max'], 0),
                                  band_lo=int(T.index.min()), band_hi=int(T.index.max())))
 
-pd.DataFrame(summary_rows).to_csv(f"{OUT}\\table5_support.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(summary_rows).to_csv(os.path.join(OUT, "table5_support.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== 4. 共同支持 + 限定重估 ====================
 P("\n\n" + "=" * 88)
@@ -261,17 +261,17 @@ for name, d in DESIGNS.items():
             except Exception as ex:
                 P(f"      [{lo},{hi}) 拟合失败: {str(ex)[:60]}")
 
-pd.DataFrame(fit_rows).to_csv(f"{OUT}\\table5_common_support.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(fit_rows).to_csv(os.path.join(OUT, "table5_common_support.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== 5. 汇总对照 ====================
 P("\n\n" + "=" * 88)
 P("# 汇总：全体估计 vs 共同支持内估计")
 P("=" * 88)
-old = pd.read_csv(f"{OUT}\\table5_designs.csv")
+old = pd.read_csv(os.path.join(OUT, "table5_designs.csv"))
 P(old[['design', 'group', 'hr', 'lo', 'hi']].to_string(index=False))
 P("")
 cs = pd.DataFrame(fit_rows)
 P(cs[['design', 'contrast', 'support', 'n', 'deaths', 'hr', 'lo_ci', 'hi_ci', 'note']].to_string(index=False))
 
-io.open(f"{OUT}\\s23_support.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s23_support.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE s23_support.txt / table5_support.csv / table5_common_support.csv")

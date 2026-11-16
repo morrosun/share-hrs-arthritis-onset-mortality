@@ -28,7 +28,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 
-d = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 d = d.dropna(subset=['entry_age', 'exit_age', 'event', 'male' if 'male' in d else 'sex', 'edu'])
 d['male'] = (d['sex'] == 1).astype(float)
 d['smoke_ever'] = (d['smoke'] >= 1).astype(float)
@@ -113,6 +113,6 @@ for name, a, b_ in [('60-74 x period', 'x1_late', 'x1_early'), ('>=75 x period',
                          p=float(stats.chi2.sf(chi2, 1))))
 
 O = pd.concat([O, pd.DataFrame(rows_int)], ignore_index=True)
-O.to_csv(f"{OUT}\\tableS1_ph_period_v18.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s91_ph_v18.txt", 'w', encoding='utf-8').write("\n".join(lines))
+O.to_csv(os.path.join(OUT, "tableS1_ph_period_v18.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s91_ph_v18.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE tableS1_ph_period_v18.csv + s91_ph_v18.txt")

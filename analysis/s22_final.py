@@ -112,7 +112,7 @@ def collect_support(data, outcome, lib, kind, label):
                                  p=m.pvalues[k], n=len(d), persons=d['pid'].nunique(), support='70-79'))
 
 # ---------- HRS ----------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = comorb_count(h)
@@ -135,7 +135,7 @@ collect_support(hh, 'iadl5a', 'HRS', 'beta', 'IADL limitations (0-5)')
 collect_support(hh, 'comorb', 'HRS', 'IRR', 'Comorbidity count (0-6)')
 
 # ---------- SHARE ----------
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = comorb_count(s)
@@ -157,13 +157,13 @@ collect_support(ss, 'mob', 'SHARE', 'IRR', 'Mobility limitation count (0-2)')
 collect_support(ss, 'comorb', 'SHARE', 'IRR', 'Comorbidity count (0-6)')
 
 R = pd.DataFrame(rows)
-R.to_csv(f"{OUT}\\table2_states.csv", index=False, encoding='utf-8-sig')
+R.to_csv(os.path.join(OUT, "table2_states.csv"), index=False, encoding='utf-8-sig')
 P("\n[写出 table2_states.csv]")
 P(R.round(3).to_string(index=False))
 
 # ---------- 吸烟完整病例 ----------
 P("\n\n" + "="*78 + "\n# 补充核查\n" + "="*78)
-d = pd.read_csv(f"{OUT}\\analysis_share.csv")
+d = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 d['grp'] = d['grp'].astype(str).str.strip()
 d['male'] = (d['sex'] == 1).astype(float)
 d['smoke_ever'] = (d['smoke'] >= 1).astype(float)
@@ -180,7 +180,7 @@ for lab, dd in [('main (missing smoke = never)', d),
 
 # ---------- 有/无诊断年龄者的比较 ----------
 P("\n[有 vs 无有效 radiagarthr 的 SHARE 应答者（选择偏倚核查）]")
-base = pd.read_csv(f"{OUT}\\analysis_share.csv")
+base = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 P("  分析队列（有诊断年龄、有随访）n=18,530：死亡 4,875（26.3%），入组年龄 67.3")
 P("  另：27,264 有诊断年龄者中 8,734 因无随访或入组<40 被排除（见流程图）")
 P("  无诊断年龄者 109,339 人 —— 本研究不对其作暴露分类，仅作为对照人群不参与主分析")
@@ -199,7 +199,7 @@ def obs_export(df, outcome, lib, label):
 fig = pd.concat([obs_export(hh, 'adl6a', 'HRS', 'ADL count'),
                  obs_export(hh, 'iadl5a', 'HRS', 'IADL count'),
                  obs_export(ss, 'mob', 'SHARE', 'Mobility limitation count')], ignore_index=True)
-fig.to_csv(f"{OUT}\\fig4_observed_states.csv", index=False, encoding='utf-8-sig')
+fig.to_csv(os.path.join(OUT, "fig4_observed_states.csv"), index=False, encoding='utf-8-sig')
 P(f"\n写出 fig4_observed_states.csv  ({len(fig)} 行)")
 
-io.open(f"{OUT}\\s22_final.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s22_final.txt"), 'w', encoding='utf-8').write("\n".join(lines))

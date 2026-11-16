@@ -17,7 +17,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-p = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+p = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 p['grp'] = p['grp'].astype(str).str.strip()
 p['event'] = p['event'].astype(int)
 p['male'] = (p['sex'] == 1).astype(float)
@@ -45,12 +45,12 @@ a1, a2 = fit(q, entry_col='entry_lt')
 P(f"    delayed entry at later of interview and diagnosis: {a1} / {a2}  n={len(q):,}")
 
 # (b) complete case for smoking (smoke missing)
-n_missing = int(pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')['smoke'].isna().sum())
+n_missing = int(pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')['smoke'].isna().sum())
 cc = p[p['smoke'].notna()].copy()
 b1, b2 = fit(cc)
 P(f"(b) complete case for smoking: {b1} / {b2}  n={len(cc):,} deaths={int(cc['event'].sum()):,} (dropped {n_missing})")
 
-df = pd.read_csv(f"{OUT}\\table4_sensitivity.csv", encoding='utf-8-sig')
+df = pd.read_csv(os.path.join(OUT, "table4_sensitivity.csv"), encoding='utf-8-sig')
 df = df[~df['scenario'].str.startswith(('Delayed entry', 'Complete case'))]
 rows = pd.DataFrame([
     dict(scenario='Delayed entry at later of interview and diagnosis',
@@ -59,7 +59,7 @@ rows = pd.DataFrame([
          hr_6074=b1, hr_75=b2, n=len(cc), events=int(cc['event'].sum()), note=''),
 ])
 df = pd.concat([df, rows], ignore_index=True)
-df.to_csv(f"{OUT}\\table4_sensitivity.csv", index=False, encoding='utf-8-sig')
+df.to_csv(os.path.join(OUT, "table4_sensitivity.csv"), index=False, encoding='utf-8-sig')
 P("\nWROTE table4_sensitivity.csv")
 P(df.to_string())
-io.open(f"{OUT}\\s87_sens_extra.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s87_sens_extra.txt"), 'w', encoding='utf-8').write("\n".join(lines))

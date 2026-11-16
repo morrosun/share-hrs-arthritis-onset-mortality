@@ -31,7 +31,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -90,5 +90,5 @@ for rname, D in [('rule A', I), ('rule B', B)]:
             risk = Dp[(Dp['grp'].astype(str) == a) & (Dp['e'] <= t) & (Dp['x'] > t)]
             P(f"  at age {t:.6f}: older group risk set = {len(risk)} respondents")
 
-io.open(f"{OUT}\\s106_boundary_riskset.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s106_boundary_riskset.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s106_boundary_riskset.txt")

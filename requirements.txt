@@ -1,0 +1,8 @@
+# Python dependencies for the analysis scripts (Python 3.11).
+# Versions are those used for the manuscript; later patch releases should work.
+pandas>=2.0,<3
+numpy>=1.24,<3
+scipy>=1.10,<2
+lifelines==0.30
+statsmodels==0.14
+pyreadr>=0.5

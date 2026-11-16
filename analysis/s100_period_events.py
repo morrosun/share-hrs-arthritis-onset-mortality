@@ -33,7 +33,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -88,5 +88,5 @@ for lab, ws in PERIODS:
           f"deaths={int(X['ev'].sum()):,} ({a} {nd.get(a,0)}, {b} {nd.get(b,0)})"
           f"  -> reference group {'BELOW' if nd.get(b,0) < 5 else 'at or above'} 5")
 
-io.open(f"{OUT}\\s100_period_events.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s100_period_events.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s100_period_events.txt")

@@ -56,7 +56,7 @@ def classify(df, WY, use_radiag=False):
 
 # ==================== HRS ====================
 P("="*78 + "\n# HRS 失能（暴露 5 态）\n" + "="*78)
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = comorb_count(h)
@@ -124,7 +124,7 @@ for k in g2.params.index:
 
 # ==================== SHARE ====================
 P("\n\n" + "="*78 + "\n# SHARE 失能（radiagarthr 分层）\n" + "="*78)
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = comorb_count(s)
@@ -160,4 +160,4 @@ for k in gs.params.index:
         c, se = gs.params[k], gs.bse[k]
         P(f"  {k:34s} IRR {np.exp(c):.3f} ({np.exp(c-1.96*se):.3f}-{np.exp(c+1.96*se):.3f})  p={gs.pvalues[k]:.3g}")
 
-io.open(f"{OUT}\\s21_common_support.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s21_common_support.txt"), 'w', encoding='utf-8').write("\n".join(lines))

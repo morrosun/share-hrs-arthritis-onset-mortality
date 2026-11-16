@@ -38,7 +38,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -116,7 +116,7 @@ for tag, (a, b, lo, hi) in PAIRS.items():
     variants['censor'] = Z[Z['x'] > Z['e']].copy()
     for nm, D in variants.items():
         D.assign(cmp=(D['grp'].astype(str) == a).astype(int)).to_csv(
-            f"{OUT}\\_coxf_{tag}_{nm}.csv", index=False)
+            os.path.join(OUT, f"_coxf_{tag}_{nm}.csv"), index=False)
     P("")
     P(f"  {'variant':8s} {'n':>6s} {'deaths':>7s} {'no covariates':>15s} {'adjusted':>13s}")
     for nm, D in variants.items():
@@ -125,5 +125,5 @@ for tag, (a, b, lo, hi) in PAIRS.items():
         P(f"  {nm:8s} {len(D):6,} {int(D['ev'].sum()):7,} {h0:15.4f} {h1:13.4f}")
     P("")
 
-io.open(f"{OUT}\\s107_boundary_mechanism.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s107_boundary_mechanism.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("Wrote out/s107_boundary_mechanism.txt and out/_coxf_*.csv")

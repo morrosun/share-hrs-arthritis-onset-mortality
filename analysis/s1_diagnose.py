@@ -23,11 +23,17 @@ WAVE_YEAR = {
 }
 
 def load(db):
-    return pyreadr.read_r(os.path.join(BASE, db + ".RData"))[db]
+    f = os.path.join(BASE, db + ".RData")
+    if not os.path.exists(f):
+        P(f"[MISS] {f}")
+        return None
+    return pyreadr.read_r(f)[db]
 
 # ---------- A. 覆盖诊断 ----------
 for db in ['hrs','charls','share','elsa','mhas','klosa']:
     d = load(db)
+    if d is None:
+        continue
     P(f"\n{'='*72}\n### {db}   rows={len(d)}  persons={d.iloc[:,0].nunique()}\n{'='*72}")
     cols = list(d.columns)
     art  = [c for c in cols if c in ('arthre',)][0]

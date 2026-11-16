@@ -10,7 +10,9 @@ import pandas as pd
 import pyreadr
 
 BASE = os.environ.get("AGING_DB_DATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"))
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "s73_smoke_age.txt")
+OUTDIR = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output"))
+os.makedirs(OUTDIR, exist_ok=True)
+OUT = os.path.join(OUTDIR, "s73_smoke_age.txt")
 WY_H = {5: 2000, 6: 2002, 7: 2004, 8: 2006, 9: 2008, 10: 2010, 11: 2012, 12: 2014, 13: 2016, 14: 2018, 15: 2020}
 L = []
 def P(s=""):

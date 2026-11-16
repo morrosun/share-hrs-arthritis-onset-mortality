@@ -15,18 +15,28 @@ lines=[]
 def P(s=""):
     lines.append(str(s)); print(s)
 
-def load(db): return pyreadr.read_r(os.path.join(BASE, db+".RData"))[db]
+def load(db):
+    f = os.path.join(BASE, db + ".RData")
+    if not os.path.exists(f):
+        P(f"[MISS] {f}")
+        return None
+    return pyreadr.read_r(f)[db]
 
 P("="*72+"\n# 1. 炎症/生化变量是否存在\n"+"="*72)
 LAB = ['crp','hscrp','wbc','uric','ua','fibrinogen','esr','il6','tnf','albumin','hgb','neutro']
 for db in ['charls','hrs','share','elsa','mhas','klosa']:
-    d = load(db); cols=[c.lower() for c in d.columns]
+    d = load(db)
+    if d is None:
+        continue
+    cols=[c.lower() for c in d.columns]
     hit = [c for c in d.columns if any(k in c.lower() for k in LAB)]
     P(f"{db:8s} lab-like cols: {hit if hit else '❌ 无'}")
 
 P("\n"+"="*72+"\n# 2. radiagarthr 合法性（SHARE / ELSA / KLoSA）\n"+"="*72)
 for db in ['share','elsa','klosa']:
     d = load(db)
+    if d is None:
+        continue
     v = d[['arthre','radiagarthr','rabyear','wave']].copy()
     d['_a'] = d['wave']
     P(f"\n--- {db} ---")
@@ -50,6 +60,8 @@ for db in ['share','elsa','klosa']:
 P("\n"+"="*72+"\n# 3. ADL / IADL 可用性\n"+"="*72)
 for db in ['hrs','charls','share','elsa','mhas','klosa']:
     d = load(db)
+    if d is None:
+        continue
     cand = [c for c in d.columns if any(k in c.lower() for k in ('adl','iadl','walkra','dadliv','mobility','adltot'))]
     P(f"{db:8s}: {cand}")
     for c in cand:
@@ -59,6 +71,8 @@ for db in ['hrs','charls','share','elsa','mhas','klosa']:
 P("\n"+"="*72+"\n# 4. 死亡信息\n"+"="*72)
 for db in ['hrs','charls','share','elsa','mhas','klosa']:
     d = load(db)
+    if d is None:
+        continue
     if 'radyear' not in d.columns: P(f"{db}: 无 radyear"); continue
     yr = d.groupby(d.columns[0])['radyear'].max()
     P(f"{db:8s} 有 rabyear: {'rabyear' in d.columns}  "

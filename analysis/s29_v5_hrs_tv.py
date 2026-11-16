@@ -23,7 +23,7 @@ def e_val(rr):
     if rr < 1: rr = 1/rr
     return rr + np.sqrt(rr*(rr-1))
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -112,6 +112,6 @@ fit('d_ever + male + edu + smoke_ever', ['d_ever'], ['d_ever'], 'Any vs never')
 fit('d_prev + d_lt60 + d_6074 + d_75 + male + edu + smoke_ever', ['d_prev', 'd_lt60', 'd_6074', 'd_75'],
     ['d_prev', 'd_lt60', 'd_6074', 'd_75'], 'Five-state')
 
-pd.DataFrame(out).to_csv(f"{OUT}\\table4_hrs_mortality_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s29_v5_hrs_tv.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(out).to_csv(os.path.join(OUT, "table4_hrs_mortality_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s29_v5_hrs_tv.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 table4_hrs_mortality_v5.csv")

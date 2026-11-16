@@ -28,7 +28,7 @@ def P(s=""):
     print(s, flush=True)
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -132,7 +132,7 @@ b = m2.summary.loc['d_75']['exp(coef)']
 c = m1.summary.loc['d_75']['exp(coef)']
 P(f"  {a:.3f} × {b:.3f} = {a*b:.3f}  vs  {c:.3f}")
 
-pd.DataFrame(out).to_csv(f"{OUT}\\table4_hrs_tv_contrasts_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s39_hrs_tv_contrasts.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(out).to_csv(os.path.join(OUT, "table4_hrs_tv_contrasts_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s39_hrs_tv_contrasts.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 out/table4_hrs_tv_contrasts_v5.csv")
 P("写出 out/s39_hrs_tv_contrasts.txt")

@@ -35,7 +35,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -112,5 +112,5 @@ for a, b, lo, hi in [('60-74', '<60', 60.0, 80.0), ('>=75', '60-74', 75.0, 95.0)
     P(f"    (c) unadjusted                 : {h3:.6f} ({l3:.4f}-{u3:.4f})")
     P(f"    1/(a) = {1/h1:.6f}   vs (b) = {h2:.6f}   |difference| = {abs(1/h1 - h2):.2e}")
 
-io.open(f"{OUT}\\s97_verify_ruleb.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s97_verify_ruleb.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s97_verify_ruleb.txt")

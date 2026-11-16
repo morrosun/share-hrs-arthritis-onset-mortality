@@ -14,7 +14,7 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines=[]
 def P(s=""):
     lines.append(str(s)); print(s)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY_S = {1:2004,2:2007,4:2011,5:2013,6:2015,7:2017,8:2020}
 
@@ -78,7 +78,7 @@ P(f"最终建模队列                  : {len(p)}  deaths={p['event'].sum()}")
 p['py'] = (p['exit_age']-p['entry_age']).clip(lower=0)
 p['grp'] = pd.cut(p['onset_age'], [4,59,74,120], labels=['<60','60-74','>=75'])
 p['smoke_ever'] = (p['smoke']>=1).astype(float)
-p.to_csv(f"{OUT}\\analysis_share.csv", index=False, encoding='utf-8-sig')
+p.to_csv(os.path.join(OUT, "analysis_share.csv"), index=False, encoding='utf-8-sig')
 
 # ---- 组内描述
 def rate_ci(d, py):
@@ -98,7 +98,7 @@ for g, x in p.groupby('grp', observed=True):
         deaths=int(d), py=py, rate=r, lo=lo, hi=hi))
 G = pd.DataFrame(rows)
 P(G.round(2).to_string(index=False))
-G.to_csv(f"{OUT}\\fig1_groups.csv", index=False, encoding='utf-8-sig')
+G.to_csv(os.path.join(OUT, "fig1_groups.csv"), index=False, encoding='utf-8-sig')
 
 # ---- 校正 HR（左截断 Cox）
 P("\n"+"="*72+"\n# 左截断 Cox（时间尺度=年龄）\n"+"="*72)
@@ -120,7 +120,7 @@ for k, key in [('60-74','g_60_74'),('>=75','g_ge75')]:
     hr[k] = cph.summary.loc[key,'exp(coef)']
     ci[k] = (cph.summary.loc[key,'exp(coef) lower 95%'], cph.summary.loc[key,'exp(coef) upper 95%'])
 H = pd.DataFrame([{'grp':k,'hr':v,'lo':ci[k][0],'hi':ci[k][1]} for k,v in hr.items()])
-H.to_csv(f"{OUT}\\fig1_hr.csv", index=False, encoding='utf-8-sig')
+H.to_csv(os.path.join(OUT, "fig1_hr.csv"), index=False, encoding='utf-8-sig')
 P("\n[H] 已写出 fig1_hr.csv")
 
 # ---- 表1
@@ -147,12 +147,12 @@ for g in order:
     })
 T1 = pd.DataFrame(t1).set_index('起病年龄组').T
 P(T1.to_string())
-T1.to_csv(f"{OUT}\\table1_share.csv", encoding='utf-8-sig')
+T1.to_csv(os.path.join(OUT, "table1_share.csv"), encoding='utf-8-sig')
 
 # 教育/吸烟/性别 的取值分布核对
 P("\n[核对] edu 取值: " + str(dict(p['edu'].value_counts().head(6))))
 P("[核对] smoke 取值: " + str(dict(p['smoke'].value_counts().head(6))))
 P("[核对] sex 取值: " + str(dict(p['sex'].value_counts().head(4))))
 
-with open(f"{OUT}\\s7_export.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s7_export.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE")

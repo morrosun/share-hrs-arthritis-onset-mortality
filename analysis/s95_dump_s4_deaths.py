@@ -37,7 +37,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S)
 s['age'] = s['yr'] - s['rabyear']
@@ -75,7 +75,7 @@ OLD = OLD[~OLD['onset_gt_entry']].copy()          # s51 "restricted 18,445"
 NEW = base_frame(impute_same_year=True, drop_wave8=True)
 NEW = NEW[~NEW['onset_gt_entry']].copy()           # s43 prevalent cohort
 
-MAIN = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+MAIN = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 MAIN = MAIN.rename(columns={'entry_age': 'entry', 'exit_age': 'exit'})
 MAIN['grp'] = MAIN['grp'].astype(str).str.strip()
 MAIN = MAIN.dropna(subset=['exit', 'entry', 'edu']).copy()
@@ -127,7 +127,7 @@ def dump(X, tag):
 
 ALL = pd.concat([dump(frames['MAIN'], 'MAIN'), dump(frames['NEW'], 'NEW'),
                  dump(frames['OLD'], 'OLD')], ignore_index=True)
-ALL.to_csv(f"{OUT}\\s95_death_dump.csv", index=False, encoding='utf-8-sig')
+ALL.to_csv(os.path.join(OUT, "s95_death_dump.csv"), index=False, encoding='utf-8-sig')
 
 sets = {k: set(v.loc[v['ev'] == 1, 'pid']) for k, v in frames.items()}
 P("")
@@ -180,7 +180,7 @@ for tag, other in [('MAIN', 'OLD'), ('OLD', 'MAIN')]:
     if 'reason' in A.columns:
         for k, v in A['reason'].value_counts().items():
             P(f"    {v:3d}  {k}")
-        A.to_csv(f"{OUT}\\s95_attr_{tag}_only.csv", index=False, encoding='utf-8-sig')
+        A.to_csv(os.path.join(OUT, f"s95_attr_{tag}_only.csv"), index=False, encoding='utf-8-sig')
         shown = A[A['reason'].str.startswith('unexplained', na=False)]
         if len(shown):
             P("    --- unexplained rows ---")
@@ -198,6 +198,6 @@ for lab, d in [('MAIN', MAIN), ('NEW', NEW), ('OLD', OLD)]:
       f"wave8={int(z['wave8'].sum()) if 'wave8' in z.columns else 'n/a'}  "
       f"onset>entry={int(z['onset_gt_entry'].sum()) if 'onset_gt_entry' in z.columns else 'n/a'}")
 
-io.open(f"{OUT}\\s95_dump_s4_deaths.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s95_dump_s4_deaths.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/s95_death_dump.csv, out/s95_dump_s4_deaths.txt")
 print("DONE")

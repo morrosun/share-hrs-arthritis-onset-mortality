@@ -76,13 +76,13 @@ def run(I, name):
     cox(B, 'B: 保留 exit<=entry 的死亡事件（exit=entry+0.5）')
     P("")
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 run(build(s, WY_S), 'SHARE 发病队列')
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 run(build(h, WY_H), 'HRS 发病队列')
 
-io.open(f"{OUT}\\s31_v5_retain_events.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s31_v5_retain_events.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 s31_v5_retain_events.txt")

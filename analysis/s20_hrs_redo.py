@@ -28,7 +28,7 @@ def e_for_bound(lo, hi):
     if lo <= 1 <= hi: return 1.0
     return e_val(hr_to_rr(hi if hi < 1 else lo))
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -119,6 +119,6 @@ rows_out += fit('d_ever + male + edu + smoke_ever', ['d_ever'], 'Any arthritis v
 rows_out += fit('d_prev + d_lt60 + d_6074 + d_75 + male + edu + smoke_ever',
                 ['d_prev', 'd_lt60', 'd_6074', 'd_75'],
                 'Prevalent + incident onset strata vs never')
-pd.DataFrame(rows_out).to_csv(f"{OUT}\\table4_hrs_mortality_v2.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s20_hrs_redo.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows_out).to_csv(os.path.join(OUT, "table4_hrs_mortality_v2.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s20_hrs_redo.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 table4_hrs_mortality_v2.csv")

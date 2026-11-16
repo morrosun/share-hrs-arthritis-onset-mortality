@@ -20,7 +20,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 def load(db):
-    d = pyreadr.read_r(f"{BASE}\\{db}.RData")[db].copy()
+    d = pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db].copy()
     return d.rename(columns={d.columns[0]: 'pid'})
 
 s = load('share')
@@ -84,5 +84,5 @@ P("\n[SHARE radiagarthr 是否在后续波次重复出现（同一 pid 的非缺
 cnt = s.dropna(subset=['radiagarthr']).groupby('pid')['wave'].nunique()
 P(cnt.value_counts().sort_index().head(10).to_string())
 
-io.open(f"{OUT}\\s46_probe.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s46_probe.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("DONE")

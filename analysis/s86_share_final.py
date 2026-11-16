@@ -23,7 +23,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S)
 s['agew'] = s['yr'] - s['rabyear']
@@ -105,5 +105,5 @@ for lab, ret, w8 in [
     P("\n" + lab)
     fit(build(ret, w8), lab)
 
-io.open(f"{OUT}\\s86_share_final.txt", 'w', encoding='utf-8').write("\n".join(lines))
-print("\nWROTE", f"{OUT}\\s86_share_final.txt")
+io.open(os.path.join(OUT, "s86_share_final.txt"), 'w', encoding='utf-8').write("\n".join(lines))
+print("\nWROTE", os.path.join(OUT, "s86_share_final.txt"))

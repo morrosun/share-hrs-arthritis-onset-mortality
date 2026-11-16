@@ -4,9 +4,10 @@
 Rule A (current main): censor at last interview, but keep respondents whose only
 interview was entry and who died later (their death supplies follow-up). This
 conditions the risk set on death.
-Rule B: censor all survivors at 2021 (assumes complete death ascertainment).
-Rule C: keep only respondents with at least two interviews, so that no one enters
-the risk set because they died.
+Rule B: keep only respondents with at least two interviews, so that no one enters
+the risk set because they died. This is a selection diagnostic, not an estimate
+of the same quantity as rule A.
+Rule C: censor all survivors at 2021 (assumes complete death ascertainment).
 """
 import io, os, sys, warnings
 warnings.filterwarnings("ignore")
@@ -18,7 +19,9 @@ import pyreadr
 from lifelines import CoxPHFitter
 
 BASE = os.environ.get("AGING_DB_DATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"))
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "s69_followup_rules.txt")
+OUTDIR = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output"))
+os.makedirs(OUTDIR, exist_ok=True)
+OUT = os.path.join(OUTDIR, "s69_followup_rules.txt")
 WY_S = {1: 2004, 2: 2007, 4: 2011, 5: 2013, 6: 2015, 7: 2017, 8: 2020}
 WY_H = {5: 2000, 6: 2002, 7: 2004, 8: 2006, 9: 2008, 10: 2010, 11: 2012, 12: 2014, 13: 2016, 14: 2018, 15: 2020}
 END = 2021
@@ -85,15 +88,15 @@ A.loc[same, "exit"] = A.loc[same, "entry"] + 0.5
 A = A[A["exit"] > A["entry"]]
 fit(A, "A. keep later deaths with one interview (current main)")
 
-B = D.copy()
-B["exit"] = np.where(B["event"] == 1, B["death_age"], 2021 - B["byear"])
-B.loc[(B["event"] == 1) & (B["exit"] <= B["entry"]), "exit"] = B.loc[(B["event"] == 1) & (B["exit"] <= B["entry"]), "entry"] + 0.5
-B = B[B["exit"] > B["entry"]]
-fit(B, "B. all survivors assumed alive to 2021")
+C = D.copy()
+C["exit"] = np.where(C["event"] == 1, C["death_age"], 2021 - C["byear"])
+C.loc[(C["event"] == 1) & (C["exit"] <= C["entry"]), "exit"] = C.loc[(C["event"] == 1) & (C["exit"] <= C["entry"]), "entry"] + 0.5
+C = C[C["exit"] > C["entry"]]
+fit(C, "C. all survivors assumed alive to 2021")
 
-C = D[D["last"] > D["entry"] + 1e-9].copy()
-C["exit"] = np.where(C["event"] == 1, C["death_age"], C["last"])
-fit(C, "C. require at least two interviews")
+B = D[D["last"] > D["entry"] + 1e-9].copy()
+B["exit"] = np.where(B["event"] == 1, B["death_age"], B["last"])
+fit(B, "B. require at least two interviews")
 
 # ---------------- HRS incident ----------------
 h = pyreadr.read_r(BASE + r"\hrs.RData")["hrs"].copy()
@@ -144,9 +147,9 @@ A2.loc[same2, "exit"] = A2.loc[same2, "entry"] + 0.5
 A2 = A2[A2["exit"] > A2["entry"]]
 fit(A2, "A. keep later and same-year deaths with one interview (current main)")
 
-C2 = I[I["last"] > I["entry"] + 1e-9].copy()
-C2["exit"] = np.where(C2["event"] == 1, C2["death_age"], C2["last"])
-fit(C2, "C. require at least two interviews")
+B2 = I[I["last"] > I["entry"] + 1e-9].copy()
+B2["exit"] = np.where(B2["event"] == 1, B2["death_age"], B2["last"])
+fit(B2, "B. require at least two interviews")
 
 io.open(OUT, "w", encoding="utf-8").write("\n".join(lines))
 print("\nwrote", OUT)

@@ -146,7 +146,7 @@ def pair(D, a, b, lo, hi):
 rows = []
 SAMPLE_N = {}
 for lib, path, wmap in [('SHARE', 'share.RData', WY_S), ('HRS', 'hrs.RData', WY_H)]:
-    df = pyreadr.read_r(f"{BASE}\\{path}")['share' if lib == 'SHARE' else 'hrs'].copy()
+    df = pyreadr.read_r(os.path.join(BASE, f"{path}"))['share' if lib == 'SHARE' else 'hrs'].copy()
     df = df.rename(columns={df.columns[0]: 'pid'})
     I = build_base(df, wmap)
     P("=" * 78)
@@ -179,7 +179,7 @@ for lib, path, wmap in [('SHARE', 'share.RData', WY_S), ('HRS', 'hrs.RData', WY_
 
 R = pd.DataFrame(rows)
 R['sample_n'] = R.apply(lambda r: SAMPLE_N[(r['cohort'], r['scenario'])], axis=1)
-R.to_csv(f"{OUT}\\tableS1_incident_v5.csv", index=False, encoding='utf-8-sig')
+R.to_csv(os.path.join(OUT, "tableS1_incident_v5.csv"), index=False, encoding='utf-8-sig')
 P(f"写出 out/tableS1_incident_v5.csv（{len(R)} 行）")
-io.open(f"{OUT}\\s38_v5_incident_sensitivity.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s38_v5_incident_sensitivity.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 out/s38_v5_incident_sensitivity.txt")

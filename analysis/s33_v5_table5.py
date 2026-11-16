@@ -155,11 +155,11 @@ def audit(D, label):
                          all_hr=allhr[0], all_lo=allhr[1], all_hi=allhr[2]))
     P("")
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 
 audit(prevalent_share(s), 'SHARE prevalent (main, unchanged)')
@@ -170,7 +170,7 @@ I_h = build_incident(h, WY_H)
 audit(I_h, 'HRS incident, v5 entry=first positive')
 audit(window5(I_h), 'HRS incident, first 5 y after first positive, v5')
 
-pd.DataFrame(rows).to_csv(f"{OUT}\\table5_v5.csv", index=False, encoding='utf-8-sig')
-pd.DataFrame(desc).to_csv(f"{OUT}\\table5_v5_desc.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s33_v5_table5.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows).to_csv(os.path.join(OUT, "table5_v5.csv"), index=False, encoding='utf-8-sig')
+pd.DataFrame(desc).to_csv(os.path.join(OUT, "table5_v5_desc.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s33_v5_table5.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 table5_v5.csv / s33_v5_table5.txt")

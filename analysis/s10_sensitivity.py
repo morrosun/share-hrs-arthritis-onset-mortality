@@ -13,7 +13,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-p = pd.read_csv(f"{OUT}\\analysis_share.csv")
+p = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 p['grp'] = p['grp'].astype(str).str.strip()
 p['event'] = p['event'].astype(int)
 p['male'] = (p['sex'] == 1).astype(float)
@@ -65,10 +65,10 @@ q = p.copy(); q['entry_lm'] = q['entry_age'] + 2
 add("2-year landmark (entry delayed 2 y)", prep(q, entry_col='entry_lm'))
 R = pd.DataFrame(rows)
 P("\n" + R[['scenario','hr_6074','hr_75','n','events']].to_string(index=False))
-R.to_csv(f"{OUT}\\table4_sensitivity.csv", index=False, encoding='utf-8-sig')
+R.to_csv(os.path.join(OUT, "table4_sensitivity.csv"), index=False, encoding='utf-8-sig')
 
 P("\n说明：所有场景下 60-74 岁起病的 HR 在 0.95-1.02，95% CI 上限不超过 1.09；")
 P("      >=75 岁起病的 HR 稳定在 0.76-0.85，方向一致（不高于参照组）。")
 
-with open(f"{OUT}\\s10_sensitivity.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s10_sensitivity.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE s10_sensitivity.txt")

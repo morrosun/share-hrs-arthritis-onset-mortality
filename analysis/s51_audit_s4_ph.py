@@ -35,7 +35,7 @@ def grp(x):
     return pd.cut(x, [4, 59.999, 74.999, 120], labels=['<60', '60-74', '>=75'])
 
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S)
 s['age'] = s['yr'] - s['rabyear']
@@ -272,7 +272,7 @@ P(f"    entry = max(entry, onset), n={len(X):,}  60-74: {a['exp(coef)']:.3f} "
 P("\n" + "=" * 88)
 P("# 4. Proportional hazards: period-specific HRs with 95% CI (SHARE prevalent)")
 P("=" * 88)
-c = pd.read_csv(f"{OUT}\\analysis_share.csv", encoding='utf-8-sig')
+c = pd.read_csv(os.path.join(OUT, "analysis_share.csv"), encoding='utf-8-sig')
 c = c.rename(columns={'entry_age': 'entry', 'exit_age': 'exit'})
 c['grp'] = c['grp'].astype(str).str.strip()
 c['g_60_74'] = (c['grp'] == '60-74').astype(float)
@@ -320,8 +320,8 @@ for key, lab in [('g_60_74:period', '60-74 x period'), ('g_ge75:period', '>=75 x
         phrows.append(dict(period='interaction', contrast=lab, hr=None, lo=None, hi=None,
                            p=round(float(z['p']), 5), n=len(S), deaths=int(S['ev'].sum())))
 
-pd.DataFrame(rows).to_csv(f"{OUT}\\tableS4_support_fine_v7.csv", index=False, encoding='utf-8-sig')
-pd.DataFrame(phrows).to_csv(f"{OUT}\\tableS1_ph_period_v7.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s51_audit_s4_ph.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows).to_csv(os.path.join(OUT, "tableS4_support_fine_v7.csv"), index=False, encoding='utf-8-sig')
+pd.DataFrame(phrows).to_csv(os.path.join(OUT, "tableS1_ph_period_v7.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s51_audit_s4_ph.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\nWrote out/tableS4_support_fine_v7.csv, out/tableS1_ph_period_v7.csv, out/s51_audit_s4_ph.txt")
 print("DONE")

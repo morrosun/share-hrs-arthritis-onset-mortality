@@ -36,7 +36,10 @@ LICENSE
 .zenodo.json
 ```
 
-Scripts are numbered `s1` to `s107`. The ones a reader is most likely to want:
+Scripts are numbered `s1` to `s107` and form a pipeline: several middle steps
+read CSV files written by earlier steps. `analysis/README.md` lists the stages,
+the dependencies, the cohort definitions and the follow-up rules. The scripts a
+reader is most likely to want:
 
 | Script | Purpose |
 |---|---|
@@ -65,7 +68,7 @@ rendering code, or any intermediate file derived from participant records.
 ## Requirements
 
 * Python 3.11 with `pandas`, `numpy`, `scipy`, `lifelines` (0.30), `statsmodels` (0.14),
-  `pyreadr`
+  `pyreadr`; the versions used for the manuscript are in `requirements.txt`
 * R 4.6 with `ggplot2`, `dplyr`, `scales`
 * PostgreSQL client only for `s5_charls_raw_probe.py`, which reads a locally loaded
   CHARLS table; it is not needed for the main analysis
@@ -87,8 +90,11 @@ export AGING_DB_ROOT=/path/to/repository
 Rscript analysis/fig3_v18.R
 ```
 
-Every script prints a plain-text report and writes the same text to `AGING_DB_OUT`.
-The numbers in the manuscript can be checked against those reports.
+Each Python script prints a plain-text report and writes the same text, plus any
+CSV it produces, to `AGING_DB_OUT` (created if absent). The R scripts then read
+the Python CSV output from `$AGING_DB_ROOT/out` and write the figures there.
+Estimates are stored at three decimals and displayed in the manuscript at two;
+`analysis/README.md` gives the headline values each script should reproduce.
 
 ## What is deliberately not included
 

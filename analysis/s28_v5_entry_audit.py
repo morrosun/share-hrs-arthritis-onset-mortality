@@ -67,7 +67,7 @@ def fit_design(D, entry_col, label, rows_out):
 rows_out = []
 
 # ---------- SHARE ----------
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s = s.rename(columns={'wave': 'wave'})
 rows = []
@@ -101,7 +101,7 @@ I_pos = I.copy(); I_pos['entry_pos'] = I_pos['pos']
 fit_design(I_pos, 'entry_pos', 'SHARE incident | strata midpoint, entry first positive (v5)', rows_out)
 
 # ---------- HRS ----------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 H = build_incident(h, WY_H)
 H = H[H['onset'] >= 40]
@@ -120,6 +120,6 @@ P(f"build_incident 所得（含 edu 缺失剔除前）: {len(build_incident(h, W
 P(f"onset>=40 且 grp 可分配（当前 v5 口径）: {len(H):,}")
 P("注：正文 7,252 来自旧脚本；表5A 分组合计 7,241 来自 s23；s20 时依 Cox 的 incident 三层合计 7,251（2483+3186+1582）。")
 
-pd.DataFrame(rows_out).to_csv(f"{OUT}\\table_v5_entry_audit.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s28_v5_entry_audit.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows_out).to_csv(os.path.join(OUT, "table_v5_entry_audit.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s28_v5_entry_audit.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 table_v5_entry_audit.csv / s28_v5_entry_audit.txt")

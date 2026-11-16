@@ -59,13 +59,13 @@ def incident_table(df, wave_map, label):
     P("")
     return I
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 I_s = incident_table(s, WY_S, "SHARE 发病队列（v5 入组=首次阳性）")
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 I_h = incident_table(h, WY_H, "HRS 发病队列（v5 入组=首次阳性）")
 
-io.open(f"{OUT}\\s30_check_exit_eq_entry.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s30_check_exit_eq_entry.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 s30_check_exit_eq_entry.txt")

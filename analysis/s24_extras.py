@@ -28,7 +28,7 @@ def to_grp(v):
 
 # ==================== A. HRS 新旧口径的起病年龄分布 ====================
 P("=" * 84 + "\n# A. HRS 起病年龄：旧口径（首次阳性报告）vs 新口径（仅 incident，区间中点）\n" + "=" * 84)
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -121,7 +121,7 @@ for lab, strict in [('>=4 present (as reported)', False), ('all 6 present (compl
                             waves=len(d)))
 
 # SHARE 同样
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['cm'], s['n_ok'] = comorb(s)
@@ -162,7 +162,7 @@ for lab, strict in [('>=4 present (as reported)', False), ('all 6 present (compl
             out.append(dict(model=lab, state=k[10:-1], ratio=est, lo=lo, hi=hi, p=m.pvalues[k],
                             waves=len(d)))
 
-pd.DataFrame(out).to_csv(f"{OUT}\\tableS3_comorb_completecase.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(out).to_csv(os.path.join(OUT, "tableS3_comorb_completecase.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== C. 上下界：只改分组 vs 同时改进入时间 ====================
 P("\n\n" + "=" * 84 + "\n# C. 区间上下界：分离「只改分组」与「同时改分组和进入时间」\n" + "=" * 84)
@@ -218,7 +218,7 @@ for lab, sh in [('lower bound', -0.5), ('upper bound', +0.5)]:
     V = W[W['exit'] > W['alt']]
     fit(V, 'alt', 'grp_alt', f'{lab}: group AND entry moved')
 
-pd.DataFrame(res_c).to_csv(f"{OUT}\\tableS4_bounds.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(res_c).to_csv(os.path.join(OUT, "tableS4_bounds.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== D. 功能分析：70-79 内加连续年龄 ====================
 P("\n\n" + "=" * 84 + "\n# D. 70-79 岁内：年龄段 vs 单岁连续年龄\n" + "=" * 84)
@@ -257,5 +257,5 @@ for lib, d, oc, fam, arg in [('HRS ADL', hh, 'adl6a', 'gaussian', None),
         except Exception as ex:
             P(f"  [{vlab}] 失败: {str(ex)[:70]}")
 
-io.open(f"{OUT}\\s24_extras.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s24_extras.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE s24_extras.txt")

@@ -18,7 +18,7 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY_H = {5:2000,6:2002,7:2004,8:2006,9:2008,10:2010,11:2012,12:2014,13:2016,14:2018,15:2020}
 WY_S = {1:2004,2:2007,4:2011,5:2013,6:2015,7:2017,8:2020}
@@ -108,14 +108,14 @@ push("Onset >=75 vs none", 'g_75', m2.summary, len(T), int(T['event'].sum()))
 push("Onset 60-74 vs <60 (among arthritis)", 'g_6074', m3.summary, T3['pid'].nunique(), int(T3['event'].sum()))
 push("Onset >=75 vs <60 (among arthritis)", 'g_75', m3.summary, T3['pid'].nunique(), int(T3['event'].sum()))
 D4 = pd.DataFrame(t4)
-D4.to_csv(f"{OUT}\\table4_hrs_mortality.csv", index=False, encoding='utf-8-sig')
+D4.to_csv(os.path.join(OUT, "table4_hrs_mortality.csv"), index=False, encoding='utf-8-sig')
 P("\n[Table 4]\n" + D4.round(3).to_string(index=False))
 
 # ==================== B. 起病年龄分布 ====================
 P("\n"+"="*76+"\n# B. 起病年龄分布\n"+"="*76)
 hrs_on = hi['onset_age'].dropna()
 hrs_on = hrs_on[(hrs_on>=18)&(hrs_on<=105)]
-sh = pd.read_csv(f"{OUT}\\analysis_share.csv")
+sh = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 sh_on = sh['onset_age'].dropna()
 P(f"SHARE n={len(sh_on)} 中位={sh_on.median():.0f}  IQR={sh_on.quantile(.25):.0f}-{sh_on.quantile(.75):.0f}")
 P(f"HRS   n={len(hrs_on)} 中位={hrs_on.median():.0f}  IQR={hrs_on.quantile(.25):.0f}-{hrs_on.quantile(.75):.0f}")
@@ -124,7 +124,7 @@ for lib, v in [('SHARE', sh_on), ('HRS', hrs_on)]:
     for lo in range(15, 100, 5):
         m = ((v >= lo) & (v < lo+5)).sum()
         dist.append(dict(lib=lib, age=lo+2.5, n=int(m)))
-pd.DataFrame(dist).to_csv(f"{OUT}\\fig1_onset_dist.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(dist).to_csv(os.path.join(OUT, "fig1_onset_dist.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== C. 流程图数字 ====================
 flow = pd.DataFrame([
@@ -135,7 +135,7 @@ flow = pd.DataFrame([
     ('Analytic cohort (deaths = 4,875)', 18530),
 ])
 P("\n[流程]\n" + flow.to_string(index=False, header=False))
-flow.to_csv(f"{OUT}\\fig1_flow.csv", index=False, header=False, encoding='utf-8-sig')
+flow.to_csv(os.path.join(OUT, "fig1_flow.csv"), index=False, header=False, encoding='utf-8-sig')
 
 # ==================== D. 分年龄别死亡率 ====================
 P("\n"+"="*76+"\n# D. 分年龄别死亡率\n"+"="*76)
@@ -171,7 +171,7 @@ RD = RD[(RD['py'] >= 300) & (RD['deaths'] >= 5)]
 RD['se'] = RD['rate']/np.sqrt(RD['deaths'].clip(lower=1))
 RD['lo'] = RD['rate']*np.exp(-1.96/np.sqrt(RD['deaths'].clip(lower=1)))
 RD['hi'] = RD['rate']*np.exp( 1.96/np.sqrt(RD['deaths'].clip(lower=1)))
-RD.to_csv(f"{OUT}\\fig3_age_rates.csv", index=False, encoding='utf-8-sig')
+RD.to_csv(os.path.join(OUT, "fig3_age_rates.csv"), index=False, encoding='utf-8-sig')
 P(RD.pivot_table(index='band', columns=['lib','grp'], values='rate').round(1).to_string())
 
 # ==================== E. 炎症层 ====================
@@ -206,8 +206,8 @@ S2 = pd.DataFrame([
          lo=100*(np.exp(mod.params['arthre']-1.96*mod.bse['arthre'])-1),
          hi=100*(np.exp(mod.params['arthre']+1.96*mod.bse['arthre'])-1), p=mod.pvalues['arthre'], unit='%'),
 ])
-S2.to_csv(f"{OUT}\\tableS2_inflammation.csv", index=False, encoding='utf-8-sig')
+S2.to_csv(os.path.join(OUT, "tableS2_inflammation.csv"), index=False, encoding='utf-8-sig')
 P("\n[Table S2]\n" + S2.round(2).to_string(index=False))
 
-with open(f"{OUT}\\s11_extras.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s11_extras.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE s11_extras.txt")

@@ -36,7 +36,7 @@ def gof(o):
 
 
 # ---------------- HRS v5 暴露 ----------------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = h[COM].fillna(0).sum(axis=1)
@@ -69,7 +69,7 @@ hh = hh.dropna(subset=['age', 'male', 'edu_c'])
 hh['state'] = pd.Categorical(hh['state'], ['never', 'prevalent', 'on_<60', 'on_60-74', 'on_>=75'])
 
 # ---------------- SHARE（基线自报诊断年龄）----------------
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = s[COM].fillna(0).sum(axis=1)
@@ -156,6 +156,6 @@ run(hh, 'comorb', 'HRS', 'ratio', 'Comorbidity count (0-6)')
 run(ss, 'mob', 'SHARE', 'ratio', 'Mobility limitations (0-2)')
 run(ss, 'comorb', 'SHARE', 'ratio', 'Comorbidity count (0-6)')
 
-pd.DataFrame(out).to_csv(f"{OUT}\\table2_7579_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s42_7579.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(out).to_csv(os.path.join(OUT, "table2_7579_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s42_7579.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("\n写出 out/table2_7579_v5.csv 与 out/s42_7579.txt")

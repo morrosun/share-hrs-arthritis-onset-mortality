@@ -33,7 +33,7 @@ def P(s=""):
 def gof(o): return '<60' if o < 60 else ('60-74' if o < 75 else '>=75')
 
 # ---------------- HRS：v5 暴露 ----------------
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h['comorb'] = h[COM].fillna(0).sum(axis=1)
@@ -67,7 +67,7 @@ hh['state'] = pd.Categorical(hh['state'], ['never', 'prevalent', 'on_<60', 'on_6
 P(f"HRS v5 person-waves={len(hh):,} persons={hh['pid'].nunique():,}")
 
 # ---------------- SHARE（不变：基线自报诊断年龄）----------------
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s['comorb'] = s[COM].fillna(0).sum(axis=1)
@@ -129,7 +129,7 @@ run_t2(hh, 'iadl5a', 'HRS', 'beta', 'IADL limitations (0-5)')
 run_t2(hh, 'comorb', 'HRS', 'ratio', 'Comorbidity count (0-6)')
 run_t2(ss, 'mob', 'SHARE', 'ratio', 'Mobility limitations (0-2)')
 run_t2(ss, 'comorb', 'SHARE', 'ratio', 'Comorbidity count (0-6)')
-pd.DataFrame(out_t2).to_csv(f"{OUT}\\table2_v5.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(out_t2).to_csv(os.path.join(OUT, "table2_v5.csv"), index=False, encoding='utf-8-sig')
 
 # ---------------- Figure 3：HRS 五态分年龄死亡率（v5 切换）----------------
 P("\n" + "=" * 84 + "\n# Figure 3 (v5)\n" + "=" * 84)
@@ -165,7 +165,7 @@ g3 = F3.groupby(['grp', 'band'], observed=True).agg(py=('py', 'sum'), death=('de
 g3['rate'] = 1000 * g3['death'] / g3['py']
 g3 = g3[g3['py'] >= 200]
 P(g3.pivot(index='band', columns='grp', values='rate').round(1).to_string())
-g3.to_csv(f"{OUT}\\fig3_rates_v5.csv", index=False, encoding='utf-8-sig')
+g3.to_csv(os.path.join(OUT, "fig3_rates_v5.csv"), index=False, encoding='utf-8-sig')
 P("\n[各组人年与死亡（v5 口径）]")
 P(F3.groupby('grp', observed=True).agg(py=('py', 'sum'), deaths=('death', 'sum')).round(0).to_string())
 
@@ -185,8 +185,8 @@ LAB_SH = {'never': 'never', 'on_<60': 'inc_<60', 'on_60-74': 'inc_60-74', 'on_>=
 f4 = pd.concat([obs(hh, 'adl6a', 'HRS', 'ADL count', LAB_HRS),
                 obs(hh, 'iadl5a', 'HRS', 'IADL count', LAB_HRS),
                 obs(ss, 'mob', 'SHARE', 'Mobility limitation count', LAB_SH)], ignore_index=True)
-f4.to_csv(f"{OUT}\\fig4_observed_v5.csv", index=False, encoding='utf-8-sig')
+f4.to_csv(os.path.join(OUT, "fig4_observed_v5.csv"), index=False, encoding='utf-8-sig')
 P(f"\n写出 fig4_observed_v5.csv ({len(f4)} 行)")
 
-io.open(f"{OUT}\\s34_v5_outputs.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s34_v5_outputs.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("DONE")

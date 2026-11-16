@@ -25,7 +25,7 @@ def e_for_bound(lo, hi):
     b = hi if hi < 1 else lo
     return e_val(hr_to_rr(b))
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]:'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age','arthre']).sort_values(['pid','wave'])
@@ -99,6 +99,6 @@ for name, key, form in [
     P(f"{name:38s} {est:.3f} ({lo:.3f}-{hi:.3f})  p={pv:.2e}  E={e_val(hr_to_rr(est)):.2f}/{e_for_bound(lo,hi):.2f}  n={n} events={ev}")
 
 df = pd.DataFrame(out)
-df.to_csv(f"{OUT}\\table4_hrs_mortality.csv", index=False, encoding='utf-8-sig')
+df.to_csv(os.path.join(OUT, "table4_hrs_mortality.csv"), index=False, encoding='utf-8-sig')
 P("\n写出 table4_hrs_mortality.csv（已覆盖为完整校正版）")
-io.open(f"{OUT}\\s14_table4.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s14_table4.txt"), 'w', encoding='utf-8').write("\n".join(lines))

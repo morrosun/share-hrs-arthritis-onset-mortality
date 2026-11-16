@@ -14,7 +14,7 @@ lines=[]
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]:'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age','arthre']).sort_values(['pid','wave'])
@@ -61,6 +61,6 @@ for lab, covs in [("sex only", "g_lt60 + g_6074 + g_75 + male"),
     P(f"\n--- {lab}  n_seg={len(D)} persons={D['pid'].nunique()} events={int(m.event_observed.sum())} ---")
     s = m.summary[['exp(coef)','exp(coef) lower 95%','exp(coef) upper 95%','p']]
     P(s.round(3).to_string())
-    s.to_csv(f"{OUT}\\hrs_cox_{lab.split()[0]}.csv", encoding='utf-8-sig')
+    s.to_csv(os.path.join(OUT, f"hrs_cox_{lab.split()[0]}.csv"), encoding='utf-8-sig')
 
-io.open(f"{OUT}\\s13_hrs_adjust.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s13_hrs_adjust.txt"), 'w', encoding='utf-8').write("\n".join(lines))

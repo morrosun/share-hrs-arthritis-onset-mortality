@@ -146,10 +146,10 @@ def pair(D, a, b, lo, hi):
                 lo=q['exp(coef) lower 95%'], hi=q['exp(coef) upper 95%'])
 
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 
 designs = [
@@ -204,6 +204,6 @@ for name, D in designs:
                              hr=round(r['hr'], 2), lo_ci=round(r['lo'], 2), hi_ci=round(r['hi'], 2)))
     P("")
 
-pd.DataFrame(rows).to_csv(f"{OUT}\\tableS4_support_fine_v5.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s43_support_fine.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(rows).to_csv(os.path.join(OUT, "tableS4_support_fine_v5.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s43_support_fine.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 out/tableS4_support_fine_v5.csv 与 out/s43_support_fine.txt")

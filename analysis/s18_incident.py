@@ -19,7 +19,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S)
 s['age'] = s['yr'] - s['rabyear']
@@ -97,5 +97,5 @@ for lab, shift in [('lower bound (last negative report)', -0.5),
     W2 = W2.dropna(subset=['grp'])
     run(W2, 'onset_s', f'Incident cohort: onset = {lab}')
 
-pd.DataFrame(res).to_csv(f"{OUT}\\s18_incident.csv", index=False, encoding='utf-8-sig')
-io.open(f"{OUT}\\s18_incident.txt", 'w', encoding='utf-8').write("\n".join(lines))
+pd.DataFrame(res).to_csv(os.path.join(OUT, "s18_incident.csv"), index=False, encoding='utf-8-sig')
+io.open(os.path.join(OUT, "s18_incident.txt"), 'w', encoding='utf-8').write("\n".join(lines))

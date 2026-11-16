@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Counts needed for the v13 text: deaths among HRS exclusions, and what Rule C removes."""
+"""Counts needed for the v13 text: deaths among HRS exclusions, and what the two-interview rule (rule B) removes."""
 import os
 import io, sys, warnings
 warnings.filterwarnings("ignore")
@@ -7,7 +7,9 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 import numpy as np, pandas as pd, pyreadr
 
 BASE = os.environ.get("AGING_DB_DATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"))
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "s76_exclusion_deaths.txt")
+OUTDIR = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output"))
+os.makedirs(OUTDIR, exist_ok=True)
+OUT = os.path.join(OUTDIR, "s76_exclusion_deaths.txt")
 WY_S = {1: 2004, 2: 2007, 4: 2011, 5: 2013, 6: 2015, 7: 2017, 8: 2020}
 WY_H = {5: 2000, 6: 2002, 7: 2004, 8: 2006, 9: 2008, 10: 2010, 11: 2012, 12: 2014, 13: 2016, 14: 2018, 15: 2020}
 L = []
@@ -45,7 +47,7 @@ P("  total      n=%d deaths=%d" % (len(q), q["event"].sum()))
 q2 = H[H["edu_n"].isna() & (H["exit"] > H["entry"])]
 P("  education missing (included by follow-up): n=%d deaths=%d" % (len(q2), q2["event"].sum()))
 
-# Rule C composition, HRS incident
+# Rule B composition (>=2 interviews), HRS incident
 I = H[(H["pattern"] == "incident") & (H["pos"].notna())].copy()
 I["entry"] = I["pos"]
 I = I[I["exit"] > I["entry"]]

@@ -15,14 +15,14 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY_S = {1:2004,2:2007,4:2011,5:2013,6:2015,7:2017,8:2020}
 WY_H = {5:2000,6:2002,7:2004,8:2006,9:2008,10:2010,11:2012,12:2014,13:2016,14:2018,15:2020}
 
 # ============ A. 偏倚复现（SHARE） ============
 P("="*76+"\n# A. 同一队列、三种分析策略（SHARE, n=18,530 / 4,875 deaths）\n"+"="*76)
-p = pd.read_csv(f"{OUT}\\analysis_share.csv")
+p = pd.read_csv(os.path.join(OUT, "analysis_share.csv"))
 p['grp'] = p['grp'].astype(str).str.strip()
 p['event'] = p['event'].astype(int)
 p['male'] = (p['sex']==1).astype(float)
@@ -73,7 +73,7 @@ for k, key in [('60-74','g_60_74'), ('>=75','g_ge75')]:
 R = pd.DataFrame(rows)
 R['txt'] = R.apply(lambda r: f"{r['hr']:.2f} ({r['lo']:.2f}\u2013{r['hi']:.2f})", axis=1)
 P("\n" + R.pivot(index='grp', columns='model', values='txt').to_string())
-R.to_csv(f"{OUT}\\table3_naive.csv", index=False, encoding='utf-8-sig')
+R.to_csv(os.path.join(OUT, "table3_naive.csv"), index=False, encoding='utf-8-sig')
 
 # 梯度检验（2 df Wald）
 def wald2(model, keys):
@@ -153,5 +153,5 @@ report("起病 60-74 vs <60，全因死亡（SHARE 左截断，阴性）", 1.021
 P("\n注：E-value 回答的是「需要多强的未测混杂才能把该关联解释掉」。")
 P("     对阴性结果，CI 界的 E-value <2 意味着中等强度混杂即可抹平——这正是我们主张「无实质差异」的依据。")
 
-with open(f"{OUT}\\s9_routeA.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s9_routeA.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE s9_routeA.txt")

@@ -18,7 +18,9 @@ import statsmodels.api as sm
 from lifelines import CoxPHFitter
 
 BASE = os.environ.get("AGING_DB_DATA", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data"))
-OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "s62_selection_ipw.txt")
+OUTDIR = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output"))
+os.makedirs(OUTDIR, exist_ok=True)
+OUT = os.path.join(OUTDIR, "s62_selection_ipw.txt")
 WY_S = {1: 2004, 2: 2007, 4: 2011, 5: 2013, 6: 2015, 7: 2017, 8: 2020}
 
 lines = []

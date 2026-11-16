@@ -15,7 +15,7 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY_H = {5:2000,6:2002,7:2004,8:2006,9:2008,10:2010,11:2012,12:2014,13:2016,14:2018,15:2020}
 WY_S = {1:2004,2:2007,4:2011,5:2013,6:2015,7:2017,8:2020}
@@ -173,7 +173,7 @@ for lib, name, res, kind in [
         est, lo, hi = np.exp(c), np.exp(c-1.96*se), np.exp(c+1.96*se)
     any_rows.append(dict(lib=lib, outcome=name, est=est, lo=lo, hi=hi, p=pv, kind=kind))
     P(f"{lib:6s} {name:32s} {kind:4s} {est:.3f} ({lo:.3f}-{hi:.3f})  p={pv:.2e}")
-pd.DataFrame(any_rows).to_csv(f"{OUT}\\table2_any.csv", index=False, encoding='utf-8-sig')
+pd.DataFrame(any_rows).to_csv(os.path.join(OUT, "table2_any.csv"), index=False, encoding='utf-8-sig')
 
 # ==================== 落盘 ====================
 def obs(df, ycol, lib, outname):
@@ -189,7 +189,7 @@ FIG = pd.concat([
     obs(hh_i, 'iadl5a', 'HRS', 'IADL count'),
     obs(ss, 'mob', 'SHARE', 'Mobility limitation count'),
 ], ignore_index=True)
-FIG.to_csv(f"{OUT}\\fig2_observed.csv", index=False, encoding='utf-8-sig')
+FIG.to_csv(os.path.join(OUT, "fig2_observed.csv"), index=False, encoding='utf-8-sig')
 
 def grab(res, outcome, lib, kind):
     t = tidy(res, r'^C\(og\)')
@@ -209,8 +209,8 @@ t2 += grab(g_com, 'Comorbidity count (0-6)', 'HRS', 'IRR')
 t2 += grab(g_adl, 'Mobility limitation count (0-2)', 'SHARE', 'IRR')
 t2 += grab(g_com_s, 'Comorbidity count (0-6)', 'SHARE', 'IRR')
 T2 = pd.DataFrame(t2)
-T2.to_csv(f"{OUT}\\table2_est.csv", index=False, encoding='utf-8-sig')
+T2.to_csv(os.path.join(OUT, "table2_est.csv"), index=False, encoding='utf-8-sig')
 P("\n[表2 估计值]\n" + T2.round(3).to_string(index=False))
 
-with open(f"{OUT}\\s8_outcomes.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s8_outcomes.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE s8_outcomes.txt")

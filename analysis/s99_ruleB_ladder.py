@@ -49,7 +49,7 @@ def grp(x):
 
 
 # ------------------------------------------------------------------ cohort
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H)
 h['age'] = h['yr'] - h['rabyear']
@@ -241,7 +241,7 @@ for i, (a, b, lo, hi) in enumerate(PAIRS, 1):
     X = frame(B, a, b, lo, hi).copy()
     X['cmp'] = (X['grp'].astype(str) == a).astype(int)
     X[['pid', 'e', 'x', 'ev', 'cmp', 'male', 'edu', 'smoke_ever']].to_csv(
-        f"{OUT}\\s99_frame_c{i}.csv", index=False)
+        os.path.join(OUT, f"s99_frame_c{i}.csv"), index=False)
     frames[i] = (a, b)
 R_SCRIPT = r'''args <- commandArgs(TRUE)
 suppressPackageStartupMessages(library(survival))
@@ -257,19 +257,23 @@ for (f in args) {
               s0$conf.int[1,3], s0$conf.int[1,4]))
 }
 '''
-rpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "s99_coxph_check.R")
-open(rpath, 'w', encoding='utf-8').write(R_SCRIPT)
-import subprocess
-try:
-    rr = subprocess.run(["Rscript", rpath,
-                         f"{OUT}\\s99_frame_c1.csv", f"{OUT}\\s99_frame_c2.csv"],
-                        capture_output=True, text=True, timeout=300)
-    for ln in (rr.stdout or "").splitlines():
-        P("    " + ln)
-    if rr.returncode != 0:
-        P("    R returned " + str(rr.returncode) + ": " + (rr.stderr or "")[:400])
-except Exception as exc:
-    P(f"    R check failed: {exc}")
+rpath = os.path.join(OUT, "_s99_coxph_check.R")
+open(rpath, "w", encoding="utf-8").write(R_SCRIPT)
+import shutil, subprocess
+if shutil.which("Rscript") is None:
+    P("    Rscript not found; optional R re-check skipped")
+else:
+    try:
+        rr = subprocess.run(["Rscript", rpath,
+                             os.path.join(OUT, "s99_frame_c1.csv"),
+                             os.path.join(OUT, "s99_frame_c2.csv")],
+                            capture_output=True, text=True, timeout=300)
+        for ln in (rr.stdout or "").splitlines():
+            P("    " + ln)
+        if rr.returncode != 0:
+            P("    R returned " + str(rr.returncode) + ": " + (rr.stderr or "")[:400])
+    except Exception as exc:
+        P(f"    optional R re-check skipped: {exc}")
 
 # -------------------------------------------------------- Poisson ladder
 P("")
@@ -363,11 +367,11 @@ C = pd.DataFrame(rows)
 C['spec'] = 'Cox, ' + C['spec']
 wide['spec'] = 'Poisson, ' + wide['spec']
 ALL = pd.concat([C, wide[['spec', 'c1', 'c2', 'diff', 'family']]], ignore_index=True)
-ALL.to_csv(f"{OUT}\\tableS9_ladder.csv", index=False, encoding='utf-8-sig')
+ALL.to_csv(os.path.join(OUT, "tableS9_ladder.csv"), index=False, encoding='utf-8-sig')
 
 P("")
 P("Wrote out/tableS9_ladder.csv")
-io.open(f"{OUT}\\s99_ruleB_ladder.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s99_ruleB_ladder.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("Wrote out/s99_ruleB_ladder.txt")
 
 # ------------------------------------------------ Table S12 exports (v31)
@@ -402,7 +406,7 @@ for a, b, lo, hi in PAIRS:
                           band='All deaths in window', py_a=float('nan'), py_b=float('nan'),
                           deaths_a=sum(da.values()) + ba, deaths_b=sum(db.values()) + bb))
 BA = pd.DataFrame(band_rows)
-BA.to_csv(f"{OUT}\\tableS12_bands.csv", index=False, encoding='utf-8-sig')
+BA.to_csv(os.path.join(OUT, "tableS12_bands.csv"), index=False, encoding='utf-8-sig')
 
 # Panel B: every specification, both ratios, their difference.
 lab_rows = []
@@ -418,7 +422,7 @@ for spec in ['5-year bands, no covariates', '5-year bands + covariates',
     lab_rows.append(dict(family='Poisson', spec=spec, c1=r1['hr'], lo1=r1['lo'], hi1=r1['hi'],
                          c2=r2['hr'], lo2=r2['lo'], hi2=r2['hi'], diff=abs(r1['hr'] - r2['hr'])))
 LB = pd.DataFrame(lab_rows)
-LB.to_csv(f"{OUT}\\tableS12_ladder.csv", index=False, encoding='utf-8-sig')
+LB.to_csv(os.path.join(OUT, "tableS12_ladder.csv"), index=False, encoding='utf-8-sig')
 P("")
 P(f"Table S12: {len(BA)-2} band rows + 2 totals; {len(LB)} specifications, "
   f"diff {LB['diff'].min():.4f}-{LB['diff'].max():.4f}")

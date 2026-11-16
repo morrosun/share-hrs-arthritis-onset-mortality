@@ -113,13 +113,13 @@ def run(I, label):
     P("")
 
 
-share = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+share = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 share = share.rename(columns={share.columns[0]: 'pid'})
-hrs = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+hrs = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 hrs = hrs.rename(columns={hrs.columns[0]: 'pid'})
 
 run(base_table(share, WY_S), 'SHARE 发病队列')
 run(base_table(hrs, WY_H), 'HRS 发病队列')
 
-io.open(f"{OUT}\\s36_reconcile_n.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s36_reconcile_n.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 out/s36_reconcile_n.txt")

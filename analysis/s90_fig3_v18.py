@@ -31,7 +31,7 @@ def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -135,7 +135,7 @@ g3 = g3[g3['py'] >= 200].sort_values(['grp', 'band']).reset_index(drop=True)
 ORDER = ['never', 'prevalent', 'on_<60', 'on_60-74', 'on_>=75']
 g3['grp'] = pd.Categorical(g3['grp'], ORDER, ordered=True)
 g3 = g3.sort_values(['grp', 'band'])
-g3.to_csv(f"{OUT}\\fig3_rates_v18.csv", index=False, encoding='utf-8-sig')
+g3.to_csv(os.path.join(OUT, "fig3_rates_v18.csv"), index=False, encoding='utf-8-sig')
 
 P("")
 P("=" * 78)
@@ -147,7 +147,7 @@ P("")
 P("band = lower bound of the 5-year band; plotted at band + 2.5")
 
 # ---- 新旧对照 ----
-old = pd.read_csv(f"{OUT}\\fig3_rates_v5.csv", encoding='utf-8-sig')
+old = pd.read_csv(os.path.join(OUT, "fig3_rates_v5.csv"), encoding='utf-8-sig')
 old['grp'] = old['grp'].astype(str).str.strip()
 new = g3.copy(); new['grp'] = new['grp'].astype(str)
 m = old.merge(new, on=['grp', 'band'], suffixes=('_v5', '_v18'), how='outer')
@@ -162,5 +162,5 @@ chg = m[(m['d_py'].abs() > 0.5) | (m['d_dt'].abs() > 0.5)]
 P(chg[['grp', 'band', 'py_v5', 'py_v18', 'death_v5', 'death_v18',
        'rate_v5', 'rate_v18', 'd_rt']].round(2).to_string(index=False))
 
-io.open(f"{OUT}\\s90_fig3_v18.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s90_fig3_v18.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 print("\nWROTE out/fig3_rates_v18.csv + out/s90_fig3_v18.txt")

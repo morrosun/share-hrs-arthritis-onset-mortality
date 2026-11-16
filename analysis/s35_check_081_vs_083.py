@@ -16,7 +16,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 agg = s.groupby('pid').agg(entry=('age', 'min'), last=('age', 'max'), sex=('ragender', 'first'),
@@ -54,5 +54,5 @@ m2.fit(Y, duration_col='exit', event_col='event', entry_col='entry')
 q = m2.summary.loc['cmp']
 P(f"两组入模 >=75 vs <60: HR {q['exp(coef)']:.3f} ({q['exp(coef) lower 95%']:.3f}-{q['exp(coef) upper 95%']:.3f})")
 
-io.open(f"{OUT}\\s35_check_081_vs_083.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s35_check_081_vs_083.txt"), 'w', encoding='utf-8').write("\n".join(lines))
 P("写出 s35_check_081_vs_083.txt")

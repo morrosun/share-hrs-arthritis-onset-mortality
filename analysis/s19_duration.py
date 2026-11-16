@@ -21,7 +21,7 @@ def P(s=""):
 
 # ==================== A. SHARE 发病队列 + 3 年窗 ====================
 P("="*78 + "\n# A. SHARE 发病队列：全程 vs 诊断后 3 年窗\n" + "="*78)
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 s['yr'] = s['wave'].map(WY_S); s['age'] = s['yr'] - s['rabyear']
 s = s.sort_values(['pid', 'wave'])
@@ -85,7 +85,7 @@ for k, x in J.dropna(subset=['grp']).groupby('grp', observed=True):
 
 # ==================== B. HRS ====================
 P("\n\n" + "="*78 + "\n# B. HRS：基线已患病 vs 随访新报告\n" + "="*78)
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -146,4 +146,4 @@ for w in [3, 5]:
     J['event'] = np.where(J['exit'] < inc['exit'] - 1e-9, 0, inc['event'])
     fit_h(J, 'exit', f'HRS incident, censored at onset+{w} y')
 
-io.open(f"{OUT}\\s19_duration.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s19_duration.txt"), 'w', encoding='utf-8').write("\n".join(lines))

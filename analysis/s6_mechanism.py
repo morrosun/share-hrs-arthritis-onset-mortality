@@ -14,7 +14,7 @@ OUT = os.environ.get("AGING_DB_OUT", os.path.join(os.path.dirname(os.path.dirnam
 lines=[]
 def P(s=""):
     lines.append(str(s)); print(s)
-def load(db): return pyreadr.read_r(f"{BASE}\\{db}.RData")[db]
+def load(db): return pyreadr.read_r(os.path.join(BASE, f"{db}.RData"))[db]
 
 WY = {1:2002,2:2004,3:2006,4:2008,5:2010,6:2012,7:2014,8:2016,9:2018,89:2017}
 
@@ -72,5 +72,5 @@ r2 = pd.DataFrame({'coef':mod2.params,'se':mod2.bse,'p':mod2.pvalues})
 r2['pct_change'] = (np.exp(r2['coef'])-1)*100
 P(r2.round(3).to_string())
 
-with open(f"{OUT}\\s6_mechanism.txt",'w',encoding='utf-8') as f: f.write("\n".join(lines))
+with open(os.path.join(OUT, "s6_mechanism.txt"),'w',encoding='utf-8') as f: f.write("\n".join(lines))
 print("\nWROTE s6_mechanism.txt")

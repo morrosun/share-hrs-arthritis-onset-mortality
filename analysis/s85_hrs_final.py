@@ -22,7 +22,7 @@ lines = []
 def P(s=""):
     lines.append(str(s)); print(s, flush=True)
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 h['yr'] = h['wave'].map(WY_H); h['age'] = h['yr'] - h['rabyear']
 h = h.dropna(subset=['age', 'arthre']).sort_values(['pid', 'wave'])
@@ -118,5 +118,5 @@ for lab, ret, drop in [
     P("\n" + lab)
     res[lab] = fit(build(ret, drop), lab)
 
-io.open(f"{OUT}\\s85_hrs_final.txt", 'w', encoding='utf-8').write("\n".join(lines))
-print("\nWROTE", f"{OUT}\\s85_hrs_final.txt")
+io.open(os.path.join(OUT, "s85_hrs_final.txt"), 'w', encoding='utf-8').write("\n".join(lines))
+print("\nWROTE", os.path.join(OUT, "s85_hrs_final.txt"))

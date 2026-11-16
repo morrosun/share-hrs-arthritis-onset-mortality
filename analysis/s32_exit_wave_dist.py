@@ -38,12 +38,12 @@ def dist(df, wave_map, name, last_wave):
     P(f"无后续访谈中位于末波 {last_wave} 者: {int((R[R['no_followup']]['pos_wave']==last_wave).sum()):,}")
     P("")
 
-s = pyreadr.read_r(f"{BASE}\\share.RData")['share'].copy()
+s = pyreadr.read_r(os.path.join(BASE, "share.RData"))['share'].copy()
 s = s.rename(columns={s.columns[0]: 'pid'})
 dist(s, WY_S, 'SHARE', 8)
 
-h = pyreadr.read_r(f"{BASE}\\hrs.RData")['hrs'].copy()
+h = pyreadr.read_r(os.path.join(BASE, "hrs.RData"))['hrs'].copy()
 h = h.rename(columns={h.columns[0]: 'pid'})
 dist(h, WY_H, 'HRS', 15)
 
-io.open(f"{OUT}\\s32_exit_wave_dist.txt", 'w', encoding='utf-8').write("\n".join(lines))
+io.open(os.path.join(OUT, "s32_exit_wave_dist.txt"), 'w', encoding='utf-8').write("\n".join(lines))
